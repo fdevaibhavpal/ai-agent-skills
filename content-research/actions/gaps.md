@@ -4,8 +4,8 @@ Find topics where audience demand is high and existing content supply is low.
 
 ## Status
 
-Router, configuration and collection: implemented.
-Pending stages: normalization (Module 04), signal extraction (Module 05), gap detection and scoring (Module 06).
+Router, configuration, collection and normalization: implemented.
+Pending stages: signal extraction (Module 05), gap detection and scoring (Module 06).
 
 ## Runs
 

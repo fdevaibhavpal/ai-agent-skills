@@ -97,6 +97,27 @@ Collected files are working data, not deliverables.
 - Tell the user where the files are.
 - Delete them or keep them only if the user asks. Do not store anything between runs by default.
 
+## Normalization
+
+After collection, turn the raw files into one evidence set:
+
+```bash
+python3 scripts/normalize.py web.jsonl reddit.jsonl youtube.jsonl github.jsonl > evidence.jsonl
+```
+
+The script validates each record against [`schemas/source.json`](../schemas/source.json), rejects bad ones (and says which line and why), and writes [`schemas/evidence.json`](../schemas/evidence.json) records. Report the rejected count; do not silently repair rejected records by hand.
+
+What it does:
+
+- **Canonical URLs for matching only.** It strips tracking parameters and fragments, and folds `www.`, `m.`, `old.reddit.com`, `youtu.be` and similar variants together. The record's `url` stays the URL that was actually retrieved; `canonical_url` is never a citation.
+- **Deduplication.** Records with the same canonical URL merge, and so do cross-domain copies with identical title and long text (200+ characters). The best record is kept (fetched over snippet, dated over undated, more metrics, more text); `queries`, `duplicate_urls` and `merged_count` record what was merged. Metrics missing from the best record are filled from the others; conflicting metrics are not averaged.
+- **Dates.** Timestamps become UTC ISO 8601, with `date_precision` of `exact`, `day` or `approx` (relative dates such as "3 days ago", computed from `retrieved_at`). Unparseable dates and dates in the future become `null`, the original is kept in `published_at_raw`, and a warning is added. Dates are never guessed.
+- **Cleaning.** HTML tags, entities, invisible characters and extra whitespace are removed from `title` and `text`.
+- **Quality flags.** `quality` records whether the item is dated, fetched, has real text, which metrics were observed, and its age in days. Later stages use these to weigh evidence; the script does not rank sources.
+- **Evidence ids.** Each record gets a stable `evidence_id` (`e-` plus eight hex characters, derived from the canonical URL). Cite evidence by this id in reports, so every claim can be traced to a record and checked.
+
+Read the summary the script prints: the share of undated records limits any trend or growth claim, and a large number of rejected or merged records is worth mentioning in the report's limits.
+
 ## Collect-only
 
-`--collect-only` runs the planned queries and stops after collection. It reports the availability table, the queries run, and counts by source, with no analysis. Use it to check which sources work in the current environment.
+`--collect-only` runs the planned queries, normalizes the result, and stops. It reports the availability table, the queries run, and the script's summary (records read, rejected, merged, kept, by source, undated), with no analysis. Use it to check which sources work in the current environment.

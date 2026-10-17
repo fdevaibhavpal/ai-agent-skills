@@ -4,8 +4,8 @@ Broad content research for a topic. This is the base action: `trends`, `gaps`, `
 
 ## Status
 
-Router, configuration and collection: implemented. Collection can be run alone with `--collect-only`.
-Pending stages: normalization (Module 04), signal extraction (Module 05).
+Router, configuration, collection and normalization: implemented. Collection and normalization can be run alone with `--collect-only`.
+Pending stages: signal extraction (Module 05).
 
 ## Runs
 

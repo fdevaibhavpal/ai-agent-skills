@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Source record",
+  "description": "One collected item, as produced by collection (see sources/_contract.md). Input to scripts/normalize.py.",
+  "type": "object",
+  "required": ["id", "source_type", "url", "title", "retrieved_at", "query", "access", "tier"],
+  "properties": {
+    "id": {"type": "string", "pattern": "^(web|reddit|youtube|github|news):\\S"},
+    "source_type": {"type": "string", "enum": ["web", "reddit", "youtube", "github", "news"]},
+    "url": {"type": "string", "pattern": "^https?://\\S+$"},
+    "title": {"type": "string"},
+    "author": {"type": ["string", "null"]},
+    "published_at": {"type": ["string", "null"]},
+    "retrieved_at": {"type": "string", "minLength": 1},
+    "text": {"type": "string"},
+    "metrics": {"type": "object", "additionalProperties": {"type": "number", "minimum": 0}},
+    "query": {"type": "string"},
+    "access": {"type": "string", "enum": ["fetched", "snippet"]},
+    "tier": {"type": "integer", "minimum": 1, "maximum": 3},
+    "competitor": {"type": ["string", "null"]},
+    "extra": {"type": "object"}
+  },
+  "additionalProperties": false
+}

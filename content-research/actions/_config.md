@@ -22,7 +22,7 @@ Anything typed after the command is arguments. Free text is the topic (or the id
 | Flag | Setting |
 |---|---|
 | `--advanced` | Advanced mode |
-| `--collect-only` | Run collection only and stop (see `sources/_contract.md`) |
+| `--collect-only` | Run collection and normalization only, then stop (see `sources/_contract.md`) |
 | `--audience <text>` | `audience` |
 | `--platforms <list>` | `platforms` (comma-separated) |
 | `--sources <list>` | `sources` (comma-separated) |
@@ -88,5 +88,5 @@ Research plan
 Then report status for each stage, using the status line in the action file.
 
 - If every stage is implemented, run them.
-- If a later stage is still pending, run nothing beyond collection, and only when the user passed `--collect-only`. Otherwise stop after the plan and say which stages are not implemented.
+- If a later stage is still pending, run nothing beyond collection and normalization, and only when the user passed `--collect-only`. Otherwise stop after the plan and say which stages are not implemented.
 - Never present partial results as the finished output of the action.

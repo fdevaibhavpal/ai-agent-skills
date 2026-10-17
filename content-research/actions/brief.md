@@ -4,8 +4,8 @@ Turn a chosen opportunity into a detailed content brief the creator can produce 
 
 ## Status
 
-Router, configuration and collection: implemented.
-Pending stages: normalization (Module 04), signal extraction (Module 05), gaps (Module 06), brief generation (Module 08).
+Router, configuration, collection and normalization: implemented.
+Pending stages: signal extraction (Module 05), gaps (Module 06), brief generation (Module 08).
 
 ## Runs
 

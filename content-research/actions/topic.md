@@ -4,8 +4,8 @@ Investigate one topic in depth. Use it when the user already knows what they wan
 
 ## Status
 
-Router, configuration and collection: implemented.
-Pending stages: normalization (Module 04), signal extraction (Module 05), topic report (Module 08).
+Router, configuration, collection and normalization: implemented.
+Pending stages: signal extraction (Module 05), topic report (Module 08).
 
 ## Runs
 

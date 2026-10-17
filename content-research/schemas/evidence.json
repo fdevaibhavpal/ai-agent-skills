@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Evidence record",
+  "description": "A normalized, deduplicated source record, as produced by scripts/normalize.py. Reports cite evidence_id.",
+  "type": "object",
+  "required": ["evidence_id", "id", "source_type", "url", "canonical_url", "domain", "title", "author",
+               "published_at", "published_at_raw", "date_precision", "retrieved_at", "text", "metrics",
+               "queries", "access", "tier", "competitor", "extra", "duplicate_urls", "merged_count",
+               "quality", "warnings"],
+  "properties": {
+    "evidence_id": {"type": "string", "pattern": "^e-[0-9a-f]{8}$"},
+    "id": {"type": "string", "pattern": "^(web|reddit|youtube|github|news):\\S"},
+    "source_type": {"type": "string", "enum": ["web", "reddit", "youtube", "github", "news"]},
+    "url": {"type": "string", "pattern": "^https?://\\S+$"},
+    "canonical_url": {"type": "string", "pattern": "^https://\\S+$"},
+    "domain": {"type": "string", "minLength": 1},
+    "title": {"type": "string"},
+    "author": {"type": ["string", "null"]},
+    "published_at": {"type": ["string", "null"], "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"},
+    "published_at_raw": {"type": ["string", "null"]},
+    "date_precision": {"type": ["string", "null"], "enum": ["exact", "day", "approx", null]},
+    "retrieved_at": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"},
+    "text": {"type": "string"},
+    "metrics": {"type": "object", "additionalProperties": {"type": "number", "minimum": 0}},
+    "queries": {"type": "array", "items": {"type": "string"}},
+    "access": {"type": "string", "enum": ["fetched", "snippet"]},
+    "tier": {"type": "integer", "minimum": 1, "maximum": 3},
+    "competitor": {"type": ["string", "null"]},
+    "extra": {"type": "object"},
+    "duplicate_urls": {"type": "array", "items": {"type": "string"}},
+    "merged_count": {"type": "integer", "minimum": 1},
+    "quality": {
+      "type": "object",
+      "required": ["dated", "fetched", "has_text", "metrics", "age_days"],
+      "properties": {
+        "dated": {"type": "boolean"},
+        "fetched": {"type": "boolean"},
+        "has_text": {"type": "boolean"},
+        "metrics": {"type": "array", "items": {"type": "string"}},
+        "age_days": {"type": ["integer", "null"], "minimum": 0}
+      },
+      "additionalProperties": false
+    },
+    "warnings": {"type": "array", "items": {"type": "string"}}
+  },
+  "additionalProperties": false
+}
