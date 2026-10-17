@@ -18,6 +18,10 @@ Audience: <audience> · Publishing on: <platforms> · Period: <period> · Run: <
 
 <Per theme with supply: how many pieces, how many creators, formats, levels, median views per day where known [e-…].>
 
+## Where to go next
+
+<Name the topics with the most demand and say that `cr-gaps` ranks them against existing content, `cr-trends` shows their direction, and `cr-competitors` shows who covers them. Do not rank opportunities here.>
+
 ## Sources
 
 | Source | Tier | Records kept | Notes |

@@ -5,8 +5,8 @@
   "type": "object",
   "required": ["id", "source_type", "url", "title", "retrieved_at", "query", "access", "tier"],
   "properties": {
-    "id": {"type": "string", "pattern": "^(web|reddit|youtube|github|news):\\S"},
-    "source_type": {"type": "string", "enum": ["web", "reddit", "youtube", "github", "news"]},
+    "id": {"type": "string", "pattern": "^(web|reddit|youtube|github|news|stackoverflow|stackexchange|hackernews):\\S"},
+    "source_type": {"type": "string", "enum": ["web", "reddit", "youtube", "github", "news", "stackoverflow", "stackexchange", "hackernews"]},
     "url": {"type": "string", "pattern": "^https?://\\S+$"},
     "title": {"type": "string"},
     "author": {"type": ["string", "null"]},

@@ -64,6 +64,16 @@ class DatasetTests(unittest.TestCase):
         self.assertEqual(testing["supply"]["by_format"], {"tutorial": 3, "case-study": 1})
         self.assertEqual(testing["supply"]["median_views_per_day"], 100.0)
 
+    def test_creators_ignore_records_that_name_no_one(self):
+        evidence, signals = world()
+        extra = [ev(60 + i, "youtube", "2026-10-01T00:00:00Z") for i in range(3)]       # search results: no channel named
+        extra += [ev(70, "web", "2026-10-01T00:00:00Z"), ev(71, "web", "2026-10-02T00:00:00Z")]  # same site twice
+        for record in extra:
+            evidence[record["evidence_id"]] = record
+            signals.append(sig(int(record["evidence_id"][2:], 16), "coverage", "rsc", format="tutorial"))
+        theme = {t["topic"]: t for t in an.analyze(evidence, signals, labels(), 90, NOW_DT)["themes"]}["rsc"]
+        self.assertEqual((theme["supply"]["evidence"], theme["supply"]["creators"]), (5, 1))
+
     def test_dated_counts(self):
         self.assertEqual((self.theme["rsc"]["dated_evidence"], self.theme["rsc"]["undated_evidence"]), (2, 1))
 
@@ -119,7 +129,7 @@ class DatasetTests(unittest.TestCase):
         text = " ".join(self.result["limits"])
         self.assertIn("2 of 24 evidence records produced no signals", text)
         self.assertIn("Fewer than 10 items for: ChanA", text)
-        self.assertIn("too few dated records", text)
+        self.assertIn("too little dated data", text)
         self.assertIn("not been independently verified", text)
         self.assertNotIn("no publication date", text)  # only 1 of 24 is undated
 
@@ -139,6 +149,84 @@ class DatasetTests(unittest.TestCase):
         first = json.dumps(self.result, sort_keys=True)
         again = an.analyze(*world(), labels(), 90, NOW_DT)
         self.assertEqual(first, json.dumps(again, sort_keys=True))
+
+
+class OffTopicCompetitorTests(unittest.TestCase):
+    """Found live: two big channels whose recent uploads had nothing to do with the topic."""
+
+    def build(self, with_on_topic=True):
+        evidence, signals = world()
+        if not with_on_topic:
+            evidence = {k: v for k, v in evidence.items() if not v["competitor"]}
+            signals = [s for s in signals if s["evidence_id"] in evidence]
+        for n in range(30, 36):
+            record = ev(n, "youtube", f"2026-10-{n - 20:02d}T00:00:00Z", author="OffChan", competitor="OffChan",
+                        metrics={"views": 100000}, queries=["channel feed UCxxxxxxxxxxxxxxxxxxxxxx"])
+            evidence[record["evidence_id"]] = record
+        return an.analyze(evidence, signals, labels(), 90, NOW_DT)
+
+    def test_off_topic_competitor_is_flagged_and_excluded_from_coverage(self):
+        block = self.build()["competitors"]
+        by_name = {c["competitor"]: c for c in block["competitors"]}
+        self.assertTrue(by_name["OffChan"]["off_topic"])
+        self.assertEqual(by_name["OffChan"]["topical_share"], 0.0)
+        self.assertFalse(by_name["ChanA"]["off_topic"])
+        self.assertEqual(block["on_topic"], 1)
+        self.assertEqual(block["topic_coverage"], {"testing": {"competitors": 1, "items": 4},
+                                                   "profiling": {"competitors": 1, "items": 1}})
+        self.assertEqual(block["demand_topics_no_competitor_coverage"], ["react-memo", "memory-leaks", "rsc"])
+
+    def test_only_off_topic_competitors_means_no_blind_spot_claims(self):
+        result = self.build(with_on_topic=False)
+        self.assertEqual(result["competitors"]["on_topic"], 0)
+        self.assertEqual(result["competitors"]["demand_topics_no_competitor_coverage"], [])
+        import score as sc
+        scored = sc.score_analysis(result, sc.load_config(), "advanced")
+        self.assertTrue(all(o["competitor_blind_spot"] is None for o in scored["opportunities"]))
+
+    def test_limits_explain_the_exclusion_and_the_feed_sample(self):
+        text = " ".join(self.build()["limits"])
+        self.assertIn("Off-topic competitors (OffChan)", text)
+        self.assertIn("latest uploads only", text)
+        self.assertNotIn("Fewer than 10 items for: ChanA, OffChan", text)   # off-topic ones are not listed as thin
+
+
+class VolumeTrendTests(unittest.TestCase):
+    def test_classify_volume(self):
+        self.assertEqual(an.classify_volume(10, 5, 0, 0)[0], "unknown")            # under VOLUME_MIN
+        self.assertEqual(an.classify_volume(30, 0, 0, 0)[0], "emerging")
+        self.assertEqual(an.classify_volume(60, 30, 0, 0)[0], "growing")           # no baseline: raw ratio 2.0
+        self.assertEqual(an.classify_volume(30, 60, 0, 0)[0], "declining")
+        self.assertEqual(an.classify_volume(40, 36, 0, 0)[0], "stable")
+
+    def test_a_platform_wide_slump_is_not_a_topic_decline(self):
+        # topic items fell 100 -> 60, but the whole platform fell 1000 -> 400: the topic's share rose
+        direction, why = an.classify_volume(60, 100, 400, 1000)
+        self.assertEqual(direction, "growing")
+        self.assertIn("share rose", why)
+
+    def volume(self, **per_topic):
+        return {"meta": {"baseline": {"hackernews": {"recent": 200, "prior": 200}}},
+                "topics": {t: {"query": t, "sources": {"hackernews": c}} for t, c in per_topic.items()}}
+
+    def test_apply_volume_overrides_direction_and_keeps_sample_fields(self):
+        evidence, signals = world()
+        base = an.analyze(evidence, signals, labels(), 90, NOW_DT)
+        with_volume = an.analyze(evidence, signals, labels(), 90, NOW_DT,
+                                 self.volume(rsc={"recent": 50, "prior": 20}, profiling={"recent": 3, "prior": 2}))
+        before = {t["topic"]: t for t in base["trends"]}
+        after = {t["topic"]: t for t in with_volume["trends"]}
+        self.assertEqual(before["rsc"]["direction"], "unknown")
+        self.assertEqual(after["rsc"]["direction"], "growing")
+        self.assertEqual(after["rsc"]["basis"], "volume")
+        self.assertIn("50 items in the recent 45 days vs 20 in the prior 45 days", after["rsc"]["reason"])
+        self.assertEqual(an._items(1), "1 item")
+        self.assertTrue(after["rsc"]["volume"]["baseline"])
+        self.assertEqual(after["profiling"]["direction"], "unknown")               # 5 items: too few to say
+        self.assertEqual(after["react-memo"]["basis"], "sample")                   # not in the volume file
+        self.assertEqual(after["rsc"]["recent"], before["rsc"]["recent"])         # sample counts stay for recency
+        self.assertTrue(with_volume["meta"]["volume_trends"])
+        self.assertEqual(an.sort_trends(list(with_volume["trends"]))[0]["direction"], "growing")
 
 
 class CliTests(unittest.TestCase):
@@ -164,6 +252,28 @@ class CliTests(unittest.TestCase):
         self.assertEqual(data["meta"]["now"], NOW)  # defaults to the latest retrieved_at
         self.assertEqual(data["meta"]["period_days"], 90)
         self.assertIn("5 themes, 5 trends, 1 competitors from 24 evidence records", err)
+
+    def test_volume_file_is_used_and_checked(self):
+        volume = {"meta": {"baseline": {}}, "topics": {"rsc": {"query": "rsc", "sources": {"hackernews": {"recent": 60, "prior": 20}}}}}
+        evidence, signals = world()
+        with tempfile.TemporaryDirectory() as tmp:
+            paths = [os.path.join(tmp, n) for n in ("e.jsonl", "s.jsonl", "t.json", "v.json")]
+            write_jsonl(paths[0], list(evidence.values()))
+            write_jsonl(paths[1], signals)
+            with open(paths[2], "w") as f:
+                json.dump(TOPICS, f)
+            with open(paths[3], "w") as f:
+                json.dump(volume, f)
+            out, err = io.StringIO(), io.StringIO()
+            self.assertEqual(an.main([*paths[:3], "--volume", paths[3]], out=out, err=err), 0)
+            trend = {t["topic"]: t for t in json.loads(out.getvalue())["trends"]}["rsc"]
+            self.assertEqual((trend["direction"], trend["basis"]), ("growing", "volume"))
+            with open(paths[3], "w") as f:
+                json.dump({"nope": 1}, f)
+            err = io.StringIO()
+            self.assertEqual(an.main([*paths[:3], "--volume", paths[3]], out=io.StringIO(), err=err), 2)
+            self.assertIn("not a volume.json", err.getvalue())
+            self.assertEqual(an.main([*paths[:3], "--volume", "/nonexistent.json"], out=io.StringIO(), err=io.StringIO()), 2)
 
     def test_period_changes_the_window(self):
         data = json.loads(self.run_cli(extra=["--period", "7d"])[1])

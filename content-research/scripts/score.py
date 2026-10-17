@@ -90,19 +90,22 @@ def effective_supply(theme, target, credits):
 
 
 def gap_details(theme, target):
+    """Which levels and formats existing content lacks. Only claimed where the content was labeled.
+
+    Content whose level or format is unknown says nothing about what is missing, so unknowns are
+    not counted as gaps; with too few labeled pieces the answer is None.
+    """
     supply = theme["supply"]
     pieces = supply["signals"]
-    if pieces < MIN_PIECES_FOR_DETAILS:
-        return {"supply_pieces": pieces, "levels_missing": None, "formats_missing": None, "target_level_share": None}
     by_level, by_format = supply["by_level"], supply["by_format"]
-    share = None
-    if target:
-        share = round(by_level.get(target, 0) / pieces, 2)
+    known_levels = sum(c for level, c in by_level.items() if level != "unknown")
+    known_formats = sum(c for fmt, c in by_format.items() if fmt != "unspecified")
+    have_levels, have_formats = known_levels >= MIN_PIECES_FOR_DETAILS, known_formats >= MIN_PIECES_FOR_DETAILS
     return {
         "supply_pieces": pieces,
-        "levels_missing": [lv for lv in LEVELS if by_level.get(lv, 0) == 0],
-        "formats_missing": [f for f in FORMATS if by_format.get(f, 0) == 0],
-        "target_level_share": share,
+        "levels_missing": [lv for lv in LEVELS if by_level.get(lv, 0) == 0] if have_levels else None,
+        "formats_missing": [f for f in FORMATS if by_format.get(f, 0) == 0] if have_formats else None,
+        "target_level_share": round(by_level.get(target, 0) / known_levels, 2) if (target and have_levels) else None,
     }
 
 
@@ -134,19 +137,22 @@ def component_values(candidates, trends, config, target, supply_total, min_dated
             if supply_known else "not scored: too little content found to measure supply")
     values["content_gap"] = relative(ratio_raw)
 
-    perf_raw, talk_raw = {}, {}
+    perf_raw, talk_raw, views_raw = {}, {}, {}
     for t in candidates:
         perf_raw[t["topic"]] = t["supply"]["median_views_per_day"]
         d = t["demand"]
-        has_counts = d["evidence_with_metrics"] > 0 and ("score" in d["metrics_total"] or "comments" in d["metrics_total"])
-        talk_raw[t["topic"]] = ((d["metrics_total"].get("score", 0) + d["metrics_total"].get("comments", 0))
+        has_counts = d["evidence_with_metrics"] > 0 and any(k in d["metrics_total"] for k in ("score", "comments", "answers"))
+        talk_raw[t["topic"]] = (sum(d["metrics_total"].get(k, 0) for k in ("score", "comments", "answers"))
                                 / d["evidence_with_metrics"]) if has_counts else None
-    perf, talk = relative(perf_raw, MIN_POINTS), relative(talk_raw, MIN_POINTS)
+        with_views = d.get("evidence_with_views", 0)
+        views_raw[t["topic"]] = d["metrics_total"].get("views", 0) / with_views if with_views else None
+    perf, talk, views = relative(perf_raw, MIN_POINTS), relative(talk_raw, MIN_POINTS), relative(views_raw, MIN_POINTS)
     for t in candidates:
-        parts = [v for v in (perf[t["topic"]], talk[t["topic"]]) if v is not None]
+        parts = [v for v in (perf[t["topic"]], talk[t["topic"]], views[t["topic"]]) if v is not None]
         values["engagement"][t["topic"]] = mean(parts)
         basis["engagement"][t["topic"]] = (
-            f"mean of {len(parts)} measure(s): views per day of existing content, discussion score and comments"
+            f"mean of {len(parts)} measure(s): views per day of existing content, discussion score/comments/answers, "
+            "views per question or post"
             if parts else "not scored: no comparable engagement numbers")
 
     by_trend = {t["topic"]: t for t in trends}
@@ -233,8 +239,11 @@ def score_analysis(analysis, config, target=None):
     weights = config["weights"]
     total_weight = sum(weights.values())
     blind = set(analysis["competitors"]["demand_topics_no_competitor_coverage"])
-    has_competitors = bool(analysis["competitors"]["competitors"])
+    has_competitors = analysis["competitors"].get("on_topic", len(analysis["competitors"]["competitors"])) > 0
     coverage_by_topic = analysis["competitors"]["topic_coverage"]
+
+    effective_by_topic = {t["topic"]: effective_supply(t, target, config["level_credit"]) for t in candidates}
+    top_supply = max(effective_by_topic.values())
 
     results = []
     for theme in candidates:
@@ -244,11 +253,18 @@ def score_analysis(analysis, config, target=None):
         score = (sum(weights[name] * v for name, v in used.items()) / weight_used) if weight_used > 0 else 0.0
         coverage = weight_used / total_weight
         confidence = confidence_level(theme, coverage, config, len(candidates) == 1)
+        # a topic with (almost) no content found may simply not have been searched for: never trust that as a gap
+        unsearched = supply_total >= config["min_supply_evidence_total"] and theme["supply"]["evidence"] < config["min_supply_per_topic"]
+        if unsearched:
+            confidence = "low"
         trend = next((t for t in trends if t["topic"] == topic), {"direction": "unknown", "reason": "no trend data"})
         effective = effective_supply(theme, target, config["level_credit"])
         notes = []
         if theme["supply"]["evidence"] == 0 and supply_total >= config["min_supply_evidence_total"]:
             notes.append("No existing content on this topic was found in the collected sources.")
+        if unsearched:
+            notes.append(f"Fewer than {config['min_supply_per_topic']} pieces of existing content were found for this topic. Search for "
+                         "existing content on it by name before relying on the gap: it may be an artifact of the queries.")
         if trend["direction"] == "unknown":
             notes.append("Trend direction is unknown (too few dated records), so growth was left out.")
         missing = [name for name in COMPONENTS if name not in used]
@@ -263,6 +279,11 @@ def score_analysis(analysis, config, target=None):
             "coverage": round(coverage, 2),
             "components": {name: {"value": round_or_none(values[name][topic]), "weight": weights[name],
                                   "basis": basis[name][topic]} for name in COMPONENTS},
+            "indices": {"demand": round_or_none(values["demand"][topic]),
+                        # unmeasured is not zero: with too little content found, supply stays null
+                        "supply": (round(effective_by_topic[topic] / top_supply * 100, 1) if top_supply > 0 else 0.0)
+                        if supply_total >= config["min_supply_evidence_total"] else None,
+                        "gap": round_or_none(values["content_gap"][topic])},
             "demand": {"evidence": theme["demand"]["evidence"], "signals": theme["demand"]["signals"],
                        "source_types": theme["demand"]["source_types"]},
             "supply": {"evidence": theme["supply"]["evidence"], "effective": round(effective, 2),

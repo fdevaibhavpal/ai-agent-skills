@@ -42,6 +42,16 @@ class CanonicalUrlTests(unittest.TestCase):
     def test_github_is_case_insensitive(self):
         self.check("https://github.com/Acme/WebApp/issues/1/", "https://github.com/acme/webapp/issues/1")
 
+    def test_stackoverflow_question_urls_collapse_to_the_id(self):
+        want = "https://stackoverflow.com/questions/57156582"
+        self.check("https://stackoverflow.com/questions/57156582/should-i-wrap-all-functions", want)
+        self.check("https://stackoverflow.com/q/57156582/1234567", want)
+        self.check("https://stackoverflow.com/questions/57156582", want)
+
+    def test_other_stack_exchange_communities_collapse_the_same_way(self):
+        self.check("https://fitness.stackexchange.com/questions/24595/whats-a-good-program?rq=1", "https://fitness.stackexchange.com/questions/24595")
+        self.check("https://superuser.com/q/55/12345", "https://superuser.com/questions/55")
+
     def test_default_port_dropped_other_kept(self):
         self.check("https://example.com:443/a", "https://example.com/a")
         self.check("https://example.com:8080/a", "https://example.com:8080/a")
@@ -60,6 +70,13 @@ class DateTests(unittest.TestCase):
         self.assertEqual(self.parse("2026-09-01T09:00:00.123Z")[0], "2026-09-01T09:00:00Z")
         self.assertEqual(self.parse("2026-09-01T08:30:00+02:00")[0], "2026-09-01T06:30:00Z")
         self.assertEqual(self.parse("2026-09-01 09:00")[0], "2026-09-01T09:00:00Z")
+
+    def test_dates_as_printed_on_pages(self):
+        self.assertEqual(self.parse("Oct 7, 2025"), ("2025-10-07T00:00:00Z", "day", None))
+        self.assertEqual(self.parse("October 7, 2025")[0], "2025-10-07T00:00:00Z")
+        self.assertEqual(self.parse("7 Oct 2025")[0], "2025-10-07T00:00:00Z")
+        self.assertEqual(self.parse("2025/10/07")[0], "2025-10-07T00:00:00Z")
+        self.assertEqual(self.parse("Smarch 7, 2025"), (None, None, "date_unparseable"))
 
     def test_rfc2822_and_epoch(self):
         self.assertEqual(self.parse("Tue, 01 Sep 2026 09:00:00 GMT")[0], "2026-09-01T09:00:00Z")
@@ -81,6 +98,41 @@ class DateTests(unittest.TestCase):
     def test_future_dates_are_dropped(self):
         self.assertEqual(self.parse("2027-01-01"), (None, None, "date_in_future"))
         self.assertIsNotNone(self.parse("2026-10-18T00:00:00Z")[0])  # within one day: clock skew
+
+
+class MirrorTests(unittest.TestCase):
+    def merged(self, *specs):
+        schema = load_schema("source.json")
+        records = []
+        for n, (source, url, title) in enumerate(specs):
+            raw = {"id": f"{source}:{n}", "source_type": source, "url": url, "title": title,
+                   "retrieved_at": "2026-10-17T12:00:00Z", "query": "q", "access": "snippet", "tier": 1}
+            record, errors = normalize.normalize_record(raw, schema)
+            self.assertIsNone(errors)
+            records.append(record)
+        return normalize.deduplicate(records)
+
+    def test_registrable_domain(self):
+        self.assertEqual(normalize.registrable_domain("app.atatus.com"), "atatus.com")
+        self.assertEqual(normalize.registrable_domain("www.bbc.co.uk"), "bbc.co.uk")
+        self.assertEqual(normalize.registrable_domain("example.com"), "example.com")
+
+    def test_same_title_across_one_sites_hostnames_is_one_page(self):
+        title = "Improve React app performance"
+        out = self.merged(("web", "https://app.atatus.com/guides/x", title),
+                          ("web", "https://www.atatus.com/guides/x/", title),
+                          ("web", "https://api.atatus.com/guides/x/", title))
+        self.assertEqual((len(out), out[0]["merged_count"]), (1, 3))
+
+    def test_same_title_on_different_sites_stays_separate(self):
+        title = "React performance optimization guide"
+        self.assertEqual(len(self.merged(("web", "https://a.com/x", title), ("web", "https://b.com/x", title))), 2)
+
+    def test_short_titles_and_other_source_types_never_mirror(self):
+        self.assertEqual(len(self.merged(("web", "https://www.a.com/1", "Blog"), ("web", "https://app.a.com/2", "Blog"))), 2)
+        title = "How to prevent unnecessary renders in React"
+        self.assertEqual(len(self.merged(("stackoverflow", "https://stackoverflow.com/questions/1/a", title),
+                                         ("stackoverflow", "https://stackoverflow.com/questions/2/b", title))), 2)
 
 
 class TextTests(unittest.TestCase):

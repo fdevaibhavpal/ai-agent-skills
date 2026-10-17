@@ -7,7 +7,8 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
 import normalize  # noqa: E402
 
 DOMAINS = {"reddit": "reddit.com", "github": "github.com", "youtube": "youtube.com",
-           "web": "example.com", "news": "news.example.net"}
+           "web": "example.com", "news": "news.example.net",
+           "stackoverflow": "stackoverflow.com", "stackexchange": "fitness.stackexchange.com", "hackernews": "news.ycombinator.com"}
 NOW = "2026-10-17T12:00:00Z"
 
 

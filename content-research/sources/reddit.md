@@ -1,38 +1,27 @@
 # Source: Reddit
 
-Reddit threads show what an audience asks, complains about and argues over. This is the main source of questions and pain points.
+Reddit threads are rich in questions and complaints, but **Reddit restricts automated access, and this skill does not get around that.** In the default setup Reddit is unavailable, and the skill says so.
 
-Follow [`_contract.md`](_contract.md) for tiers, query planning, record shape and privacy.
+Follow [`_contract.md`](_contract.md) for tiers, query planning, record shape and privacy, and [`_terms.md`](_terms.md) for terms.
 
 ## Tiers
 
-| Tier | How |
+| Tier | State |
 |---|---|
-| 1 Native | Web search scoped to Reddit (`site:reddit.com <query>`, optionally `site:reddit.com/r/<subreddit>`), then fetch the thread pages |
-| 2 CLI | None provided |
-| 3 API | Not provided yet. Reddit's API requires registered credentials and is rate limited; a helper script is planned and is not available. Do not claim API access |
-| 4 | If the host cannot search the web, Reddit is unavailable |
+| 1 Native | **Blocked.** The host search tool is not allowed to crawl reddit.com, and a `site:reddit.com` query returns other sites. Do not try other routes to the same pages |
+| 2 CLI | None |
+| 3 API | Not provided yet. Reddit's official API needs an app you register yourself, and its terms limit commercial use. A helper that takes your own credentials from environment variables is planned. Until it exists, do not claim API access |
+| 4 | **Unavailable by default.** Record that in the availability table: "reddit: unavailable (blocked for crawlers; no credentials)" |
 
-Reddit often blocks automated page fetches. If a thread cannot be fetched, keep the search snippet, set `access: snippet`, and report that in the availability table. Do not describe a thread you could only see a snippet of as if you had read it.
+## What to do instead
 
-## What to collect
-
-For each thread: `url`, `title`, `published_at` if shown, `text` (the post body, plus the top few comments if fetched), and:
-
-- `metrics.score` and `metrics.comments` if the page shows them
-- `extra.subreddit`
-- `author`: always `null` (see the privacy rules in the contract)
-
-## Method
-
-1. Find relevant subreddits first: run one or two broad queries and note which subreddits recur. Then run the planned queries against those subreddits.
-2. Prefer threads with real discussion over one-line posts.
-3. Skim comments for **questions**, **complaints**, **disagreements** and **recurring problems**. Put short excerpts in `text`, not whole threads.
-4. Record each item's date when shown. A 6-year-old thread is evidence of a long-standing question, not of current demand.
+- **Stack Exchange communities** ([stackexchange.md](stackexchange.md)) are open, keyless sources of questions and complaints for many niches (cooking, fitness, money, travel, DIY and more, plus programming). **Hacker News** ([hackernews.md](hackernews.md)) covers technology and startups.
+- **GitHub issues** ([github.md](github.md)) show concrete problems in specific projects.
+- For non-technical niches, add the forums that matter to that audience through the host's web search, and say which ones were reached.
+- If the user pastes Reddit threads or exports their own data, treat it as web evidence they supplied (`access: fetched`, `source_type: reddit`, the thread URL they gave), and note that it is user-supplied and not a sample.
 
 ## Pitfalls
 
-- Votes are noisy and subreddit-dependent. A score of 40 means different things in different subreddits. Compare within a subreddit only.
-- Reddit users are not the whole audience. Say so in the limits when Reddit is a main source.
-- Deleted or removed content shows as "[deleted]" or "[removed]". Skip it.
-- Do not quote a username, and do not link a claim to an individual.
+- Never present results as covering Reddit when they did not. Every report states which sources were reached and which were not.
+- Do not infer what Reddit thinks from other sources.
+- If Reddit is the audience's main home (many consumer niches), say that this run cannot see it, and that demand estimates are lower-confidence for that reason.

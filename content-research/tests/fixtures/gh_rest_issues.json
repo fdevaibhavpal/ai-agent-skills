@@ -1,0 +1,36 @@
+{
+ "total_count": 401,
+ "incomplete_results": false,
+ "items": [
+  {
+   "number": 37785,
+   "title": "areHookInputsEqual ignores extra deps when the deps array grows, returning a stale useMemo value",
+   "body": "## Summary\n\n`areHookInputsEqual` in `packages/react-reconciler/src/ReactFiberHooks.js` compares dependencies only up to `min(prevDeps.length, nextDeps.length)`:\n\n```js\nfor (let i = 0; i < prevDeps.length && i < nextDeps.length; i++) {\n  if (is(nextDeps[i], prevDeps[i])) continue;\n  return false;\n}\nreturn true;\n```\n\nWhen the deps array grows between renders, the extra entries are never compared, so the hook treats the inputs as unchanged and keeps the previous value.\n\n## Reproduction\n\nReact 19.3.",
+   "created_at": "2026-10-07T20:55:13Z",
+   "html_url": "https://github.com/react/react/issues/37785",
+   "comments": 2,
+   "state": "open",
+   "labels": [],
+   "repository_url": "https://api.github.com/repos/react/react"
+  },
+  {
+   "number": 37270,
+   "title": "[Compiler Bug]: recursive function call in useMemo() is misidentified as a dependency",
+   "body": "### What kind of issue is this?\n\n- [x] React Compiler core (the JS output is incorrect, or your app works incorrectly after optimization)\n- [ ] babel-plugin-react-compiler (build issue installing or using the Babel plugin)\n- [ ] eslint-plugin-react-hooks (build issue installing or using the eslint plugin)\n- [ ] react-compiler-healthcheck (build issue installing or using the healthcheck script)\n\n### Link to repro\n\nhttps://playground.react.dev/#N4Igzg9grgTgxgUxALhAgHgBwjALgAgBMEAzAQygBsCSoA7OXASwj",
+   "created_at": "2026-08-11T20:14:17Z",
+   "html_url": "https://github.com/react/react/issues/37270",
+   "comments": 1,
+   "state": "open",
+   "labels": [
+    {
+     "name": "Type: Bug"
+    },
+    {
+     "name": "Status: Unconfirmed"
+    }
+   ],
+   "repository_url": "https://api.github.com/repos/react/react"
+  }
+ ],
+ "search_type": "lexical"
+}

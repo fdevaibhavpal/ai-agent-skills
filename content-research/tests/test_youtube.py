@@ -9,6 +9,7 @@ HERE = os.path.dirname(__file__)
 sys.path.insert(0, os.path.join(HERE, "..", "scripts"))
 import youtube  # noqa: E402
 from record import SourceError  # noqa: E402
+from schema_check import load_schema, validate  # noqa: E402
 
 
 def fixture(name):
@@ -94,6 +95,53 @@ class YoutubeTests(unittest.TestCase):
         code = youtube.main(["search", "q"], fetch=FakeApi(), out=out, environ={"YOUTUBE_API_KEY": "KEY"})
         self.assertEqual(code, 0)
         self.assertEqual(len(out.getvalue().splitlines()), 2)
+
+
+class FeedTests(unittest.TestCase):
+    """Fixture is a trimmed real channel feed."""
+
+    def feed_text(self):
+        with open(os.path.join(HERE, "fixtures", "yt_feed.xml"), encoding="utf-8") as f:
+            return f.read()
+
+    def test_channel_id_forms(self):
+        cid = "UCsBjURrPoezykLs9EqgamOA"
+        self.assertEqual(youtube.channel_id_from(cid), cid)
+        self.assertEqual(youtube.channel_id_from(f"https://www.youtube.com/channel/{cid}"), cid)
+
+    def test_handles_are_refused_with_instructions_not_scraped(self):
+        for value in ("@fireship", "https://www.youtube.com/@fireship", "fireship"):
+            with self.assertRaisesRegex(SourceError, "Copy channel ID"):
+                youtube.channel_id_from(value)
+
+    def test_feed_records(self):
+        recs, name = youtube.feed_to_records(self.feed_text(), "UCsBjURrPoezykLs9EqgamOA", "q", "2026-10-17T00:00:00Z")
+        self.assertEqual(name, "Fireship")
+        self.assertEqual(len(recs), 2)
+        first = recs[0]
+        self.assertRegex(first["id"], r"^youtube:[\w-]{11}$")
+        self.assertEqual(first["url"], "https://www.youtube.com/watch?v=" + first["id"].split(":")[1])
+        self.assertEqual((first["author"], first["competitor"], first["tier"]), ("Fireship", "Fireship", 3))
+        self.assertIsInstance(first["metrics"]["views"], int)
+        self.assertRegex(first["published_at"], r"^\d{4}-\d{2}-\d{2}T")
+        self.assertNotIn("likes", first["metrics"])        # the feed has no like counts: never invent them
+        self.assertEqual(validate(first, load_schema("source.json")), [])
+
+    def test_feed_cli_uses_the_right_url_and_names_the_channel(self):
+        seen = []
+        out, err = io.StringIO(), io.StringIO()
+        code = youtube.main(["feed", "UCsBjURrPoezykLs9EqgamOA", "--limit", "1"],
+                            fetch_text=lambda url: seen.append(url) or self.feed_text(), out=out, err=err, environ={})
+        self.assertEqual(code, 0)
+        self.assertEqual(seen, ["https://www.youtube.com/feeds/videos.xml?channel_id=UCsBjURrPoezykLs9EqgamOA"])
+        self.assertEqual(len(out.getvalue().splitlines()), 1)
+        self.assertIn("'Fireship'", err.getvalue())   # the user can confirm the channel is the one they meant
+
+    def test_bad_feed(self):
+        with self.assertRaisesRegex(SourceError, "not valid XML"):
+            youtube.feed_to_records("<html>nope", "UCsBjURrPoezykLs9EqgamOA", "q", "2026-10-17T00:00:00Z")
+        with self.assertRaisesRegex(SourceError, "no videos"):
+            youtube.channel_feed("UCsBjURrPoezykLs9EqgamOA", fetch_text=lambda u: '<feed xmlns="http://www.w3.org/2005/Atom"></feed>')
 
 
 if __name__ == "__main__":

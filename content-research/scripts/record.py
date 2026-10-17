@@ -5,7 +5,7 @@ import json
 import sys
 from datetime import datetime, timezone
 
-SOURCE_TYPES = ("web", "reddit", "youtube", "github", "news")
+SOURCE_TYPES = ("web", "reddit", "youtube", "github", "news", "stackoverflow", "stackexchange", "hackernews")
 MAX_TEXT = 2000
 
 

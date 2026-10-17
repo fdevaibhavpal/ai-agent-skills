@@ -15,7 +15,7 @@ Pending stages: verdict (Module 08).
 
 See [`_config.md`](_config.md). The free-text argument is the **idea**, not a broad topic.
 
-- **Required:** `topic` (the idea, as a sentence), `audience`, `platforms`
+- **Required:** `topic` (the idea, as a sentence), `audience`, `audience_level`, `platforms`
 - **Optional (defaults apply):** `sources`, `period`, `depth`, `geography`, `competitors`
 - **Advanced:** `language`, `goal`, `profile`
 

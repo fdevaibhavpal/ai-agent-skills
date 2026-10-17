@@ -9,8 +9,8 @@
                "quality", "warnings"],
   "properties": {
     "evidence_id": {"type": "string", "pattern": "^e-[0-9a-f]{8}$"},
-    "id": {"type": "string", "pattern": "^(web|reddit|youtube|github|news):\\S"},
-    "source_type": {"type": "string", "enum": ["web", "reddit", "youtube", "github", "news"]},
+    "id": {"type": "string", "pattern": "^(web|reddit|youtube|github|news|stackoverflow|stackexchange|hackernews):\\S"},
+    "source_type": {"type": "string", "enum": ["web", "reddit", "youtube", "github", "news", "stackoverflow", "stackexchange", "hackernews"]},
     "url": {"type": "string", "pattern": "^https?://\\S+$"},
     "canonical_url": {"type": "string", "pattern": "^https://\\S+$"},
     "domain": {"type": "string", "minLength": 1},

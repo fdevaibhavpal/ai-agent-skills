@@ -13,7 +13,9 @@
         "properties": {
           "topic": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"},
           "label": {"type": "string", "minLength": 1},
-          "aliases": {"type": "array", "items": {"type": "string", "minLength": 1}}
+          "aliases": {"type": "array", "items": {"type": "string", "minLength": 1}},
+          "queries": {"type": "array", "items": {"type": "string", "minLength": 1}},
+          "wikipedia": {"type": "string", "minLength": 1}
         },
         "additionalProperties": false
       }

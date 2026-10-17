@@ -12,7 +12,7 @@ Every action collects its configuration the same way. Action files list which se
 
 ## Modes
 
-- **Minimal** (default): ask only for the settings an action marks *required*, usually topic, audience and platforms.
+- **Minimal** (default): ask only for the settings an action marks *required*, usually topic, audience and platforms. For actions that score content gaps (`gaps`, `ideas`, `validate`, `brief`, `full`), `audience_level` is also asked unless the audience text already states it, because it changes how existing content is weighted. If the user declines to say, score without it and tell them.
 - **Advanced** (`--advanced`): also ask the settings an action marks *advanced*.
 
 ## Argument syntax
@@ -24,6 +24,7 @@ Anything typed after the command is arguments. Free text is the topic (or the id
 | `--advanced` | Advanced mode |
 | `--collect-only` | Run collection and normalization only, then stop (see `sources/_contract.md`) |
 | `--audience <text>` | `audience` |
+| `--level <beginner\|intermediate\|advanced\|mixed>` | `audience_level` |
 | `--platforms <list>` | `platforms` (comma-separated) |
 | `--sources <list>` | `sources` (comma-separated) |
 | `--competitors <list>` | `competitors` (comma-separated names or URLs, or `auto`) |
@@ -33,7 +34,7 @@ Anything typed after the command is arguments. Free text is the topic (or the id
 | `--language <text>` | `language` |
 | `--goal <text>` | `goal` |
 
-Example: `cr-gaps React performance --audience senior developers --platforms youtube,linkedin`
+Example: `cr-gaps beginner strength training --audience "adults starting out" --platforms youtube`
 
 If a flag is unknown or malformed, say so and ask. Do not silently drop it.
 
@@ -44,7 +45,8 @@ If a flag is unknown or malformed, say so and ask. Do not silently drop it.
 | `topic` | What topic or niche should I research? | Free text | none, required |
 | `audience` | Who is the target audience? | Free text, or: beginners, intermediate, advanced, general | none, required |
 | `platforms` | Where will you publish? | YouTube, Shorts/Reels, LinkedIn, X, blog, newsletter, multiple | none, required |
-| `sources` | Which sources should I research? | web, reddit, youtube, github, news, x | all available |
+| `audience_level` | What level is the audience? | beginner, intermediate, advanced, mixed | taken from `audience` if it says so; otherwise asked for gap actions |
+| `sources` | Which sources should I research? | web, news, youtube, a Stack Exchange community, forums, hackernews, github (reddit is unavailable by default) | all available that suit the subject |
 | `period` | What time period matters? | 7d, 30d, 90d, 1y | 90d |
 | `competitors` | Which competitors should I analyze? | Names or URLs, or `auto` to discover them | none (`auto` for `competitors` action) |
 | `geography` | Which country or region? | Free text | global |
@@ -57,7 +59,7 @@ If a flag is unknown or malformed, say so and ask. Do not silently drop it.
 
 ## Session profile
 
-When the user describes themselves ("I make YouTube videos for senior developers, my competitors are X and Y"), extract `audience`, `platforms`, `competitors` and `profile` and reuse them for later actions in the same conversation without asking again.
+When the user describes themselves ("I make YouTube videos for home bakers, my competitors are X and Y"), extract `audience`, `platforms`, `competitors` and `profile` and reuse them for later actions in the same conversation without asking again.
 
 - Keep the profile **in the conversation only**. Do not write it to disk by default.
 - Write it only when the user explicitly asks to save it, to `.content-research/profile.json` in the current project (this path is gitignored). Say where you wrote it.
@@ -65,7 +67,7 @@ When the user describes themselves ("I make YouTube videos for senior developers
 
 ## Capability check
 
-Before running, work out which sources are available using the tiers in [`../sources/_contract.md`](../sources/_contract.md), and include the source availability table in the plan. If an action cannot run without a source that is unavailable (for example, web search for almost everything), name the capability, say which step needs it, and stop. Do not substitute remembered knowledge for research.
+Before running, work out which sources are available using the tiers in [`../sources/_contract.md`](../sources/_contract.md), and include the source availability table in the plan. Check what your host's search actually returns (titles only? dates?) and say so. Reddit is unavailable by default and is reported as such. If an action cannot run without a source that is unavailable (for example, web search for almost everything), name the capability, say which step needs it, and stop. Do not substitute remembered knowledge for research, and never work around a block ([`../sources/_terms.md`](../sources/_terms.md)).
 
 ## The plan block
 
@@ -75,10 +77,10 @@ After configuration is complete, show this block, and use it for every action:
 Research plan
   Action:       <action> (cr-<action>)
   Topic:        ...
-  Audience:     ...
+  Audience:     ... (level: ...)
   Platforms:    ...
   Sources:      ... (default: all available), with the availability table
-  Queries:      the planned queries per source
+  Queries:      the planned queries per source, for the discovery pass and the period pass
   Period:       ... Depth: ... Geography: ... Language: ...
   Competitors:  ... (or none)
   Stages:       1. <stage>  2. <stage>  ...

@@ -2,6 +2,8 @@
 
 Audience: <audience> · Window: last <period_days> days (to <now>) · Run: <date>
 
+<Paste `python3 scripts/render.py trends analysis.json` here, unchanged, then add one sentence per emerging, growing and declining topic: what the evidence shows [e-…], and separately any inference.>
+
 Directions are heuristic: a topic needs at least <min_dated> dated records, and growth or decline means at least <growth_ratio>x change between the two halves of the window.
 
 ## Emerging

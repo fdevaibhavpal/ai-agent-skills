@@ -1,0 +1,48 @@
+{
+ "items": [
+  {
+   "tags": [
+    "reactjs",
+    "react-hooks",
+    "eslint",
+    "create-react-app",
+    "use-effect"
+   ],
+   "is_answered": true,
+   "view_count": 1255218,
+   "protected_date": 1623391888,
+   "accepted_answer_id": 55854902,
+   "answer_count": 26,
+   "score": 890,
+   "last_activity_date": 1768355436,
+   "creation_date": 1556152514,
+   "last_edit_date": 1652746637,
+   "question_id": 55840294,
+   "content_license": "CC BY-SA 4.0",
+   "link": "https://stackoverflow.com/questions/55840294/how-to-fix-missing-dependency-warning-when-using-useeffect-react-hook",
+   "title": "How to fix missing dependency warning when using useEffect React Hook",
+   "body": "<p>With React 16.8.6 (it was good on previous version 16.8.3), I get this error when I attempt to prevent an infinite loop on a fetch request:</p>\n<pre><code>./src/components/BusinessesList.js\nLine 51:  React Hook useEffect has a missing dependency: 'fetchBusinesses'.\nEither include it or remove the dependency array  react-hooks/exhaustive-deps\n</code></pre>\n<p>I've been unable to find a solution that stops the infinite loop. I want to stay away from using <code>useReducer()</code>.  I did find this discussion <em><a href=\"https://github.com/facebook/react/issues/14920\" rel=\"noreferrer\">[ESLint] Feedback for 'exhaustive-deps' lint rule #14920</a></em> where a possible solution is <code>You c"
+  },
+  {
+   "tags": [
+    "reactjs"
+   ],
+   "is_answered": true,
+   "view_count": 110975,
+   "accepted_answer_id": 54963730,
+   "answer_count": 8,
+   "score": 225,
+   "last_activity_date": 1760041102,
+   "creation_date": 1551562473,
+   "last_edit_date": 1551562846,
+   "question_id": 54963248,
+   "content_license": "CC BY-SA 4.0",
+   "link": "https://stackoverflow.com/questions/54963248/whats-the-difference-between-usecallback-and-usememo-in-practice",
+   "title": "What&#39;s the difference between useCallback and useMemo in practice?",
+   "body": "<p>Maybe I misunderstood something, but useCallback Hook runs everytime when re-render happens.</p>\n\n<p>I passed inputs - as a second argument to useCallback - non-ever-changeable constants - but returned memoized callback still runs my expensive calculations at every render (I'm pretty sure - you can check by yourself in the snippet below).</p>\n\n<p>I've changed useCallback to useMemo - and useMemo works as expected \u2014 runs when passed inputs changes. And really memoizes the expensive calculations.</p>\n\n<h2>Live example:</h2>\n\n<p><div class=\"snippet\" data-lang=\"js\" data-hide=\"false\" data-console=\"true\" data-babel=\"true\">\r\n<div class=\"snippet-code\">\r\n<pre class=\"snippet-code-js lang-js prettyp"
+  }
+ ],
+ "has_more": true,
+ "quota_max": 300,
+ "quota_remaining": 297
+}

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns:yt="http://www.youtube.com/xml/schemas/2015" xmlns:media="http://search.yahoo.com/mrss/" xmlns="http://www.w3.org/2005/Atom">
+ <link rel="self" href="http://www.youtube.com/feeds/videos.xml?channel_id=UCsBjURrPoezykLs9EqgamOA"/>
+ <id>yt:channel:sBjURrPoezykLs9EqgamOA</id>
+ <yt:channelId>sBjURrPoezykLs9EqgamOA</yt:channelId>
+ <title>Fireship</title>
+ <link rel="alternate" href="https://www.youtube.com/channel/UCsBjURrPoezykLs9EqgamOA"/>
+ <author>
+  <name>Fireship</name>
+  <uri>https://www.youtube.com/channel/UCsBjURrPoezykLs9EqgamOA</uri>
+ </author>
+ <published>2017-04-07T18:17:23+00:00</published>
+ <entry>
+  <id>yt:video:l3L_lETiSzc</id>
+  <yt:videoId>l3L_lETiSzc</yt:videoId>
+  <yt:channelId>UCsBjURrPoezykLs9EqgamOA</yt:channelId>
+  <title>The runtime wars are over... and Node won</title>
+  <link rel="alternate" href="https://www.youtube.com/watch?v=l3L_lETiSzc"/>
+  <author>
+   <name>Fireship</name>
+   <uri>https://www.youtube.com/channel/UCsBjURrPoezykLs9EqgamOA</uri>
+  </author>
+  <published>2026-10-15T17:35:15+00:00</published>
+  <updated>2026-10-16T08:37:25+00:00</updated>
+  <media:group>
+   <media:title>The runtime wars are over... and Node won</media:title>
+   <media:content url="https://www.youtube.com/v/l3L_lETiSzc?version=3" type="application/x-shockwave-flash" width="640" height="390"/>
+   <media:thumbnail url="https://i1.ytimg.com/vi/l3L_lETiSzc/hqdefault.jpg" width="480" height="360"/>
+   <media:description>Every JetBrains account now comes with a free coding model called Junie Lite. Try it: https://jb.gg/JunieLite
+
+Cloudflare just acquired Deno and the creator of Node.js is finally admitting that reimplementing it was a mistake. Let's dive in.
+
+Want more Fireship?
+
+🗞️ Newsletter: https://bytes.dev
+🧠 C</media:description>
+   <media:community>
+    <media:starRating count="11601" average="5.00" min="1" max="5"/>
+    <media:statistics views="963838"/>
+   </media:community>
+  </media:group>
+ </entry>
+<entry>
+  <id>yt:video:QZVzuq28eFw</id>
+  <yt:videoId>QZVzuq28eFw</yt:videoId>
+  <yt:channelId>UCsBjURrPoezykLs9EqgamOA</yt:channelId>
+  <title>OpenAI’s lead engineer was secretly a spy...</title>
+  <link rel="alternate" href="https://www.youtube.com/watch?v=QZVzuq28eFw"/>
+  <author>
+   <name>Fireship</name>
+   <uri>https://www.youtube.com/channel/UCsBjURrPoezykLs9EqgamOA</uri>
+  </author>
+  <published>2026-10-14T17:48:10+00:00</published>
+  <updated>2026-10-15T23:40:34+00:00</updated>
+  <media:group>
+   <media:title>OpenAI’s lead engineer was secretly a spy...</media:title>
+   <media:content url="https://www.youtube.com/v/QZVzuq28eFw?version=3" type="application/x-shockwave-flash" width="640" height="390"/>
+   <media:thumbnail url="https://i2.ytimg.com/vi/QZVzuq28eFw/hqdefault.jpg" width="480" height="360"/>
+   <media:description>Run GitHub Actions 2x faster and build with Codesmith at https://www.blacksmith.sh/
+
+An OpenAI engineer built a wiretap with his wife’s ChatGPT account, hid it in toilet paper behind the executive boardroom TV, and lasted 48 hours before getting caught. Let's dive in.
+
+Want more Fireship?
+
+🗞️ Newsle</media:description>
+   <media:community>
+    <media:starRating count="22471" average="5.00" min="1" max="5"/>
+    <media:statistics views="1522214"/>
+   </media:community>
+  </media:group>
+ </entry>
+</feed>

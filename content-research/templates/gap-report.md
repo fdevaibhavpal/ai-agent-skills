@@ -6,15 +6,13 @@ Scores rank the topics found in this run against each other. They are not compar
 
 ## Ranked opportunities
 
-| # | Topic | Score | Tier | Confidence | Growth | Demand records | Existing content |
-|---|---|---|---|---|---|---|---|
-
-<One row per entry in `opportunities`, in rank order. Use the tier name as given; do not upgrade it.>
+<Paste the output of `python3 scripts/render.py gaps opportunities.json --top 5` here, unchanged: the ranked table, then demand / supply / gap bars for the top topics. Use the tier names as given; do not upgrade them.>
 
 ## <Rank>. <Topic label> — <score> (<tier>, <confidence> confidence)
 
 - **Why it ranks here (analysis):** <the components with values and weights, in the order they mattered most. Name any component that was left out and why (`notes`).>
 - **Demand (evidence):** <n> records from <source types>. What people ask: <top_statements> [e-…]
+- **Demand, supply, gap (analysis):** <the three indices as in the bars. If supply or gap is n/a, say existing content was not measured; do not call the topic underserved.>
 - **Existing content (evidence):** <n> pieces from <creators> creators; <effective> effective for this audience level. <levels_missing / formats_missing / target_level_share when present.> [e-…]
 - **Trend:** <direction> — <reason>
 - **Competitors:** <blind spot or covered, with counts, or "not analyzed">

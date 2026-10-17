@@ -2,7 +2,7 @@
 
 Recent developments: releases, announcements, incidents and industry coverage. Used to find what changed recently and whether coverage has caught up.
 
-Follow [`_contract.md`](_contract.md) for tiers, query planning, record shape and privacy.
+Follow [`_contract.md`](_contract.md) for tiers, query planning, record shape and privacy. See [`_terms.md`](_terms.md) for terms.
 
 ## Tiers
 
@@ -15,7 +15,9 @@ Follow [`_contract.md`](_contract.md) for tiers, query planning, record shape an
 
 ## What to collect
 
-For each item: `url`, `title`, `published_at` (required for this source; if you cannot find a date, do not keep the item), `text` (a short excerpt), and `extra.publisher` and `extra.page_type` (`announcement`, `release-notes`, `news`, `analysis`).
+For each item: `url` (the one you fetched), `title`, `published_at` (required for this source; if the page does not show a date, do not keep the item), `text` (up to three sentences copied verbatim from the page), and `extra.publisher` and `extra.page_type` (`announcement`, `release-notes`, `news`, `analysis`).
+
+Fetch primary sources with the prompt in [web.md](web.md): title, the date shown on the page, and three verbatim sentences under 110 characters. Take the date from the page itself, not from the search tool's summary.
 
 ## Method
 

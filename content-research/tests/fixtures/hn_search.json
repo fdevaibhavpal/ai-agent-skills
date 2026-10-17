@@ -1,0 +1,79 @@
+{
+ "exhaustive": {
+  "nbHits": false,
+  "typo": false
+ },
+ "exhaustiveNbHits": false,
+ "exhaustiveTypo": false,
+ "hits": [
+  {
+   "objectID": "49567873",
+   "title": "The Rust React Compiler is now native in Vite",
+   "url": "https://blog.master.dev/react-now-rusted-all-the-way-out/",
+   "points": 179,
+   "num_comments": 56,
+   "created_at": "2026-09-04T17:49:09Z",
+   "story_text": null,
+   "_tags": [
+    "story",
+    "author_acusti",
+    "story_49567873"
+   ]
+  },
+  {
+   "objectID": "48473662",
+   "title": "Port React Compiler to Rust",
+   "url": "https://github.com/react/react/pull/36173",
+   "points": 124,
+   "num_comments": 118,
+   "created_at": "2026-06-10T09:19:55Z",
+   "story_text": null,
+   "_tags": [
+    "story",
+    "author_boudra",
+    "story_48473662"
+   ]
+  },
+  {
+   "objectID": "40819440",
+   "title": "Understanding React Compiler",
+   "url": "https://tonyalicea.dev/blog/understanding-react-compiler/",
+   "points": 114,
+   "num_comments": 204,
+   "created_at": "2024-06-28T11:05:40Z",
+   "story_text": null,
+   "_tags": [
+    "story",
+    "author_kiyanwang",
+    "story_40819440"
+   ]
+  }
+ ],
+ "hitsPerPage": 3,
+ "nbHits": 235,
+ "nbPages": 79,
+ "page": 0,
+ "params": "query=react+compiler&tags=story&hitsPerPage=3&advancedSyntax=true&analyticsTags=backend",
+ "processingTimeMS": 73,
+ "processingTimingsMS": {
+  "_request": {
+   "roundTrip": 24
+  },
+  "fetch": {
+   "query": 10,
+   "scanning": 4,
+   "total": 15
+  },
+  "getIdx": {
+   "load": {
+    "gens": 48,
+    "synonyms": 7,
+    "total": 56
+   },
+   "total": 56
+  },
+  "total": 73
+ },
+ "query": "react compiler",
+ "serverTimeMS": 125
+}

@@ -28,9 +28,11 @@ from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from schema_check import load_schema, validate  # noqa: E402
 
+_QA_HOSTS = {"stackoverflow.com", "superuser.com", "serverfault.com", "askubuntu.com", "mathoverflow.net"}
 TRACKING_PARAMS = {"fbclid", "gclid", "dclid", "msclkid", "igshid", "mc_cid", "mc_eid",
                    "_hsenc", "_hsmi", "ref_src", "ref_url", "si", "feature", "spm"}
 MIN_TEXT_FOR_HASH = 200  # shorter texts are too generic to treat as copies
+MIN_TITLE_FOR_MIRROR = 20  # shorter titles ("Home", "Blog") say nothing about identity
 FUTURE_TOLERANCE = timedelta(days=1)
 ISO_FORMAT = "%Y-%m-%dT%H:%M:%SZ"
 
@@ -67,6 +69,11 @@ def canonical_url(url):
             query = [(k, v) for k, v in query if k == "v"]
     elif host == "github.com":
         path = path.lower()
+    elif host in _QA_HOSTS or host.endswith(".stackexchange.com"):
+        # /questions/<id>/<slug> and /q/<id> are the same question
+        match = re.match(r"^/(?:questions|q)/(\d+)", path)
+        if match:
+            path, query = f"/questions/{match.group(1)}", []     # the id identifies the question; parameters like ?rq=1 do not
 
     path = re.sub(r"/{2,}", "/", path)
     if len(path) > 1:
@@ -82,6 +89,7 @@ def canonical_url(url):
 # ---------------------------------------------------------------- dates
 
 _ISO = re.compile(r"^(\d{4})-(\d{2})-(\d{2})(?:[T ](\d{2}):(\d{2})(?::(\d{2})(?:[.,]\d+)?)?)?\s*(Z|[+-]\d{2}:?\d{2})?$")
+_DAY_FORMATS = ("%b %d, %Y", "%B %d, %Y", "%d %b %Y", "%d %B %Y", "%Y/%m/%d", "%b %d %Y")  # as printed on pages
 _RELATIVE = re.compile(r"^(\d+|an?|one)\s+(minute|hour|day|week|month|year)s?\s+ago$", re.I)
 _UNIT_DAYS = {"minute": 1 / 1440, "hour": 1 / 24, "day": 1, "week": 7, "month": 30, "year": 365}
 
@@ -107,8 +115,24 @@ def parse_datetime(value):
             dt = parsedate_to_datetime(text)  # RFC 2822, e.g. "Tue, 01 Sep 2026 09:00:00 GMT"
             return dt.astimezone(timezone.utc) if dt.tzinfo else dt.replace(tzinfo=timezone.utc)
         except (TypeError, ValueError, IndexError):
-            return None
+            pass
+        for pattern in _DAY_FORMATS:
+            try:
+                return datetime.strptime(text, pattern).replace(tzinfo=timezone.utc)
+            except ValueError:
+                continue
+        return None
     return None
+
+
+def _is_day_format(text):
+    for pattern in _DAY_FORMATS:
+        try:
+            datetime.strptime(text, pattern)
+            return True
+        except ValueError:
+            continue
+    return False
 
 
 def parse_published(value, retrieved):
@@ -137,7 +161,8 @@ def parse_published(value, retrieved):
         dt = parse_datetime(text)
         if dt is None:
             return None, None, "date_unparseable"
-        precision = "day" if _ISO.match(text) and not _ISO.match(text).group(4) else "exact"
+        iso = _ISO.match(text)
+        precision = "day" if (iso and not iso.group(4)) or (not iso and _is_day_format(text)) else "exact"
 
     if dt > retrieved + FUTURE_TOLERANCE:
         return None, None, "date_in_future"
@@ -154,6 +179,24 @@ def clean_text(value):
     text = html.unescape(_TAGS.sub(" ", value or ""))
     text = _INVISIBLE.sub("", text)
     return re.sub(r"\s+", " ", text).strip()
+
+
+_SECOND_LEVEL = {"co", "com", "org", "net", "gov", "ac", "edu"}
+
+
+def registrable_domain(host):
+    """The site a hostname belongs to, approximately (app.example.com and www.example.com match)."""
+    labels = host.split(".")
+    if len(labels) >= 3 and labels[-2] in _SECOND_LEVEL and len(labels[-1]) == 2:
+        return ".".join(labels[-3:])
+    return ".".join(labels[-2:])
+
+
+def mirror_key(record):
+    """Same long title on one site's hostnames is the same page (mirrors, www/app/api). Web and news only."""
+    if record["source_type"] in ("web", "news") and len(record["title"]) >= MIN_TITLE_FOR_MIRROR:
+        return registrable_domain(record["domain"]), record["title"].lower()
+    return None
 
 
 def content_hash(title, text):
@@ -260,13 +303,16 @@ def merge_group(group):
 
 
 def deduplicate(records):
-    """Group by canonical URL, then by identical long title+text. Keep first-seen order."""
-    groups, by_url, by_hash = [], {}, {}
+    """Group by canonical URL, then identical long text, then same long title on one site. Keep first-seen order."""
+    groups, by_url, by_hash, by_mirror = [], {}, {}, {}
     for record in records:
         index = by_url.get(record["canonical_url"])
         digest = content_hash(record["title"], record["text"])
+        mirror = mirror_key(record)
         if index is None and digest:
             index = by_hash.get(digest)
+        if index is None and mirror:
+            index = by_mirror.get(mirror)
         if index is None:
             index = len(groups)
             groups.append([])
@@ -274,6 +320,8 @@ def deduplicate(records):
         by_url.setdefault(record["canonical_url"], index)
         if digest:
             by_hash.setdefault(digest, index)
+        if mirror:
+            by_mirror.setdefault(mirror, index)
     return [merge_group(g) for g in groups]
 
 

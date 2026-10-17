@@ -83,7 +83,7 @@ class ScoreTests(unittest.TestCase):
         order = [(o["rank"], o["topic"], o["score"], o["tier"], o["confidence"]) for o in self.result["opportunities"]]
         self.assertEqual(order, [(1, "profiling", 77.7, "interesting", "low"),
                                  (2, "memory-leaks", 67.6, "marginal", "low"),
-                                 (3, "react-memo", 67.3, "marginal", "medium"),
+                                 (3, "react-memo", 67.3, "marginal", "low"),
                                  (4, "rsc", 52.5, "ignore", "low")])
 
     def test_components(self):
@@ -111,6 +111,34 @@ class ScoreTests(unittest.TestCase):
     def test_engagement_needs_two_comparable_topics(self):
         # only one candidate topic has views/day or discussion numbers, so nothing is scaled against itself
         self.assertTrue(all(o["components"]["engagement"]["value"] is None for o in self.by_topic.values()))
+
+    def test_a_topic_whose_content_was_not_searched_for_is_capped_and_flagged(self):
+        # found live: "visas" ranked exceptional only because nobody had searched for visa videos yet.
+        # In the sample data every candidate topic has under 2 pieces of content.
+        for topic, o in self.by_topic.items():
+            self.assertEqual(o["confidence"], "low", topic)
+            self.assertTrue(any("Search for existing content" in n for n in o["notes"]), topic)
+        analysis = analysis_for()
+        theme = next(t for t in analysis["themes"] if t["topic"] == "profiling")
+        theme["supply"]["evidence"] = 3                                          # enough content found: no flag
+        _, searched = scored(analysis)
+        self.assertFalse(any("Search for existing content" in n for n in searched["profiling"]["notes"]))
+        self.assertTrue(any("Search for existing content" in n for n in searched["rsc"]["notes"]))
+
+    def test_without_the_guard_medium_confidence_keeps_a_top_tier(self):
+        config = sc.load_config()
+        config["min_supply_per_topic"] = 0
+        config["tiers"] = [{"name": n, "min": m} for n, m in (("exceptional", 50), ("strong", 40), ("interesting", 30), ("marginal", 20), ("ignore", 0))]
+        _, by_topic = scored(config=config)
+        self.assertEqual(by_topic["react-memo"]["confidence"], "medium")
+        self.assertEqual(by_topic["react-memo"]["tier"], "exceptional")
+        self.assertEqual(by_topic["profiling"]["tier"], "interesting")           # low confidence is capped
+
+    def test_demand_supply_gap_indices(self):
+        indices = {t: o["indices"] for t, o in self.by_topic.items()}
+        self.assertEqual(indices["profiling"], {"demand": 64.0, "supply": 100.0, "gap": 64.0})   # the only topic with level-matched supply
+        self.assertEqual(indices["react-memo"], {"demand": 100.0, "supply": 0.0, "gap": 100.0})
+        self.assertEqual(indices["rsc"]["supply"], 0.0)
 
     def test_unscored_and_warnings(self):
         self.assertEqual(self.result["unscored"], [{"topic": "testing", "reason": "0 demand evidence records (needs 3)"}])
@@ -153,6 +181,8 @@ class VariationTests(unittest.TestCase):
         signals = [s for s in signals if s["type"] != "coverage"]
         result, by_topic = scored(analysis_for(evidence_signals=(evidence, signals)))
         self.assertTrue(all(o["components"]["content_gap"]["value"] is None for o in by_topic.values()))
+        # unmeasured is not zero: with too little content found, the supply index is null too
+        self.assertTrue(all(o["indices"]["supply"] is None and o["indices"]["gap"] is None for o in by_topic.values()))
         self.assertTrue(any("could not be measured" in w for w in result["warnings"]))
         self.assertFalse(any("No existing content" in n for o in by_topic.values() for n in o["notes"]))
 
@@ -172,6 +202,7 @@ class VariationTests(unittest.TestCase):
 
     def test_low_confidence_caps_the_tier(self):
         config = sc.load_config()
+        config["min_supply_per_topic"] = 0
         config["tiers"] = [{"name": n, "min": m} for n, m in
                            (("exceptional", 50), ("strong", 40), ("interesting", 30), ("marginal", 20), ("ignore", 0))]
         _, by_topic = scored(config=config)
@@ -199,6 +230,20 @@ class VariationTests(unittest.TestCase):
         self.assertEqual(details["target_level_share"], 0.0)
         thin = by_topic["react-memo"]["gap_details"]
         self.assertEqual((thin["levels_missing"], thin["formats_missing"]), (None, None))
+
+    def test_unlabeled_content_is_not_reported_as_a_missing_level_or_format(self):
+        # found live: six pieces, none with a level, used to report every level as missing
+        analysis = analysis_for()
+        theme = next(t for t in analysis["themes"] if t["topic"] == "profiling")
+        theme["supply"].update(signals=6, evidence=6, by_level={"unknown": 6}, by_format={"unspecified": 6})
+        details = scored(analysis)[1]["profiling"]["gap_details"]
+        self.assertEqual(details, {"supply_pieces": 6, "levels_missing": None, "formats_missing": None,
+                                   "target_level_share": None})
+        theme["supply"].update(by_level={"advanced": 3, "unknown": 3}, by_format={"tutorial": 3, "unspecified": 3})
+        details = scored(analysis)[1]["profiling"]["gap_details"]
+        self.assertEqual(details["levels_missing"], ["beginner", "intermediate"])
+        self.assertEqual(details["target_level_share"], 1.0)      # all three labeled pieces are at the target level
+        self.assertEqual(details["formats_missing"], ["explainer", "case-study", "talk", "reference"])
 
     def test_no_competitor_analysis_means_no_blind_spot_claims(self):
         analysis = analysis_for()

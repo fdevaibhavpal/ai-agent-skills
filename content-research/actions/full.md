@@ -17,7 +17,7 @@ Each stage reuses the results of the stages before it. Do not repeat collection.
 
 See [`_config.md`](_config.md). Ask the advanced questions by default for this action, since it is the most thorough one.
 
-- **Required:** `topic`, `audience`, `platforms`
+- **Required:** `topic`, `audience`, `audience_level`, `platforms`
 - **Asked by default:** `competitors`, `period`, `depth`, `sources`
 - **Optional (defaults apply):** `geography`, `language`, `goal`, `profile`
 

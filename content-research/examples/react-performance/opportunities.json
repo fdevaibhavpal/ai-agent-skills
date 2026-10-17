@@ -1,0 +1,783 @@
+{
+  "meta": {
+    "audience_level": "intermediate",
+    "weights": {
+      "demand": 0.3,
+      "growth": 0.2,
+      "content_gap": 0.2,
+      "engagement": 0.15,
+      "recency": 0.1,
+      "audience_fit": 0.05
+    },
+    "topics_scored": 7,
+    "topics_unscored": 2,
+    "analysis_now": "2026-10-17T12:35:32Z",
+    "period_days": 90
+  },
+  "opportunities": [
+    {
+      "topic": "memoization-hooks",
+      "label": "useMemo, useCallback and React.memo",
+      "score": 85.2,
+      "tier": "strong",
+      "confidence": "medium",
+      "coverage": 0.7,
+      "components": {
+        "demand": {
+          "value": 100.0,
+          "weight": 0.3,
+          "basis": "12 evidence records from 2 source type(s), scaled to the strongest topic"
+        },
+        "growth": {
+          "value": null,
+          "weight": 0.2,
+          "basis": "unknown: 0 items in the recent 45 days vs 1 in the prior 45 days (github, hackernews, stackoverflow); only 1 item matched across both windows (need 20)"
+        },
+        "content_gap": {
+          "value": 83.3,
+          "weight": 0.2,
+          "basis": "12 demand records vs 9.50 effective supply"
+        },
+        "engagement": {
+          "value": 69.7,
+          "weight": 0.15,
+          "basis": "mean of 2 measure(s): views per day of existing content, discussion score/comments/answers, views per question or post"
+        },
+        "recency": {
+          "value": null,
+          "weight": 0.1,
+          "basis": "not scored: fewer than 4 dated records"
+        },
+        "audience_fit": {
+          "value": 50.0,
+          "weight": 0.05,
+          "basis": "how well the demand signals' levels match a intermediate audience"
+        }
+      },
+      "indices": {
+        "demand": 100.0,
+        "supply": 100.0,
+        "gap": 83.3
+      },
+      "demand": {
+        "evidence": 12,
+        "signals": 12,
+        "source_types": {
+          "stackoverflow": 9,
+          "github": 3
+        }
+      },
+      "supply": {
+        "evidence": 19,
+        "effective": 9.5,
+        "creators": 4
+      },
+      "growth": {
+        "direction": "unknown",
+        "reason": "0 items in the recent 45 days vs 1 in the prior 45 days (github, hackernews, stackoverflow); only 1 item matched across both windows (need 20)"
+      },
+      "competitor_blind_spot": null,
+      "gap_details": {
+        "supply_pieces": 19,
+        "levels_missing": null,
+        "formats_missing": [
+          "case-study",
+          "reference"
+        ],
+        "target_level_share": null
+      },
+      "top_statements": [
+        "Developers are unsure when useMemo and useCallback are worth using",
+        "Memoization does not behave as developers expect",
+        "React may discard memoized values, so memoization is not a guarantee"
+      ],
+      "evidence_ids": {
+        "demand": [
+          "e-71a7fa3a",
+          "e-3b2e514f",
+          "e-36bb1eac",
+          "e-b1b2d321",
+          "e-3b18da52",
+          "e-b8b41d25",
+          "e-97845ad4",
+          "e-45452b4b",
+          "e-d36cb114",
+          "e-2e198ff1",
+          "e-f5726531",
+          "e-cc59d136"
+        ],
+        "supply": [
+          "e-fbdefee6",
+          "e-9fbd68ad",
+          "e-84e86b60",
+          "e-529116bd",
+          "e-6ebe4330",
+          "e-3b7d2f5c",
+          "e-66254ea8",
+          "e-330713d3",
+          "e-288a435f",
+          "e-84340df9",
+          "e-ee173fa4",
+          "e-f1c3227b",
+          "e-d68479e1",
+          "e-6308099b",
+          "e-24a69bf6",
+          "e-8f12fc8d",
+          "e-9e81fa22",
+          "e-f77bcc71",
+          "e-5cf7a0c6"
+        ]
+      },
+      "notes": [
+        "Trend direction is unknown (too few dated records), so growth was left out.",
+        "Left out of the score: growth, recency."
+      ],
+      "rank": 1
+    },
+    {
+      "topic": "react-compiler",
+      "label": "React Compiler",
+      "score": 78.3,
+      "tier": "interesting",
+      "confidence": "high",
+      "coverage": 0.9,
+      "components": {
+        "demand": {
+          "value": 100.0,
+          "weight": 0.3,
+          "basis": "12 evidence records from 2 source type(s), scaled to the strongest topic"
+        },
+        "growth": {
+          "value": 15,
+          "weight": 0.2,
+          "basis": "declining: 24 items in the recent 45 days vs 39 in the prior 45 days (github, hackernews, stackoverflow); share fell to 0.65 of its earlier level"
+        },
+        "content_gap": {
+          "value": 100.0,
+          "weight": 0.2,
+          "basis": "12 demand records vs 7.75 effective supply"
+        },
+        "engagement": {
+          "value": 100.0,
+          "weight": 0.15,
+          "basis": "mean of 1 measure(s): views per day of existing content, discussion score/comments/answers, views per question or post"
+        },
+        "recency": {
+          "value": null,
+          "weight": 0.1,
+          "basis": "not scored: fewer than 4 dated records"
+        },
+        "audience_fit": {
+          "value": 50.0,
+          "weight": 0.05,
+          "basis": "how well the demand signals' levels match a intermediate audience"
+        }
+      },
+      "indices": {
+        "demand": 100.0,
+        "supply": 81.6,
+        "gap": 100.0
+      },
+      "demand": {
+        "evidence": 12,
+        "signals": 12,
+        "source_types": {
+          "hackernews": 8,
+          "github": 4
+        }
+      },
+      "supply": {
+        "evidence": 16,
+        "effective": 7.75,
+        "creators": 6
+      },
+      "growth": {
+        "direction": "declining",
+        "reason": "24 items in the recent 45 days vs 39 in the prior 45 days (github, hackernews, stackoverflow); share fell to 0.65 of its earlier level"
+      },
+      "competitor_blind_spot": null,
+      "gap_details": {
+        "supply_pieces": 16,
+        "levels_missing": null,
+        "formats_missing": [
+          "reference"
+        ],
+        "target_level_share": null
+      },
+      "top_statements": [
+        "React Compiler draws heavy discussion",
+        "React Compiler mishandles memoization dependencies",
+        "Developers want to understand what React Compiler changes"
+      ],
+      "evidence_ids": {
+        "demand": [
+          "e-95d221a2",
+          "e-09bda917",
+          "e-5f8e28da",
+          "e-9485eab6",
+          "e-b0ce4f3d",
+          "e-dc3857b1",
+          "e-6d40d746",
+          "e-32cfa93a",
+          "e-9489f26c",
+          "e-6bdb1d76",
+          "e-3e45e47c",
+          "e-d13a2e21"
+        ],
+        "supply": [
+          "e-c76280d2",
+          "e-9fbd68ad",
+          "e-84e86b60",
+          "e-e5283d24",
+          "e-0cf82db4",
+          "e-eef4f429",
+          "e-4dc4aaae",
+          "e-80b2aef7",
+          "e-a8d181f1",
+          "e-40838f9b",
+          "e-876db621",
+          "e-5533a004",
+          "e-5a9bd356",
+          "e-25a1cad9",
+          "e-01ad8fc4",
+          "e-66254ea8"
+        ]
+      },
+      "notes": [
+        "Left out of the score: recency."
+      ],
+      "rank": 2
+    },
+    {
+      "topic": "profiling-tools",
+      "label": "Profiling and render-inspection tools",
+      "score": 57.6,
+      "tier": "ignore",
+      "confidence": "medium",
+      "coverage": 0.7,
+      "components": {
+        "demand": {
+          "value": 70.0,
+          "weight": 0.3,
+          "basis": "7 evidence records from 3 source type(s), scaled to the strongest topic"
+        },
+        "growth": {
+          "value": null,
+          "weight": 0.2,
+          "basis": "unknown: 3 items in the recent 45 days vs 5 in the prior 45 days (github, hackernews, stackoverflow); only 8 items matched across both windows (need 20)"
+        },
+        "content_gap": {
+          "value": 68.1,
+          "weight": 0.2,
+          "basis": "7 demand records vs 6.50 effective supply"
+        },
+        "engagement": {
+          "value": 21.4,
+          "weight": 0.15,
+          "basis": "mean of 2 measure(s): views per day of existing content, discussion score/comments/answers, views per question or post"
+        },
+        "recency": {
+          "value": null,
+          "weight": 0.1,
+          "basis": "not scored: fewer than 4 dated records"
+        },
+        "audience_fit": {
+          "value": 50.0,
+          "weight": 0.05,
+          "basis": "how well the demand signals' levels match a intermediate audience"
+        }
+      },
+      "indices": {
+        "demand": 70.0,
+        "supply": 68.4,
+        "gap": 68.1
+      },
+      "demand": {
+        "evidence": 7,
+        "signals": 7,
+        "source_types": {
+          "stackoverflow": 2,
+          "hackernews": 4,
+          "github": 1
+        }
+      },
+      "supply": {
+        "evidence": 13,
+        "effective": 6.5,
+        "creators": 3
+      },
+      "growth": {
+        "direction": "unknown",
+        "reason": "3 items in the recent 45 days vs 5 in the prior 45 days (github, hackernews, stackoverflow); only 8 items matched across both windows (need 20)"
+      },
+      "competitor_blind_spot": null,
+      "gap_details": {
+        "supply_pieces": 13,
+        "levels_missing": null,
+        "formats_missing": [
+          "case-study",
+          "talk",
+          "reference"
+        ],
+        "target_level_share": null
+      },
+      "top_statements": [
+        "Developers want tools that show what causes a render",
+        "Developers cannot tell what makes their React app slow"
+      ],
+      "evidence_ids": {
+        "demand": [
+          "e-298218bf",
+          "e-e4317a89",
+          "e-66f05eef",
+          "e-b0c87902",
+          "e-165a99e0",
+          "e-70009632",
+          "e-a54aa2e4"
+        ],
+        "supply": [
+          "e-2ebc27c7",
+          "e-acd7f288",
+          "e-f13bed59",
+          "e-2310f576",
+          "e-781bb486",
+          "e-160f97f6",
+          "e-4933a342",
+          "e-9f50ee3e",
+          "e-25b5cdd9",
+          "e-8378af79",
+          "e-10a9fa8c",
+          "e-d750a571",
+          "e-f421c174"
+        ]
+      },
+      "notes": [
+        "Trend direction is unknown (too few dated records), so growth was left out.",
+        "Left out of the score: growth, recency."
+      ],
+      "rank": 3
+    },
+    {
+      "topic": "rerender-debugging",
+      "label": "Finding and preventing unnecessary re-renders",
+      "score": 51.6,
+      "tier": "ignore",
+      "confidence": "medium",
+      "coverage": 0.7,
+      "components": {
+        "demand": {
+          "value": 58.3,
+          "weight": 0.3,
+          "basis": "7 evidence records from 2 source type(s), scaled to the strongest topic"
+        },
+        "growth": {
+          "value": null,
+          "weight": 0.2,
+          "basis": "unknown: 0 items in the recent 45 days vs 0 in the prior 45 days (github, hackernews, stackoverflow); only 0 items matched across both windows (need 20)"
+        },
+        "content_gap": {
+          "value": 78.5,
+          "weight": 0.2,
+          "basis": "7 demand records vs 5.50 effective supply"
+        },
+        "engagement": {
+          "value": 2.8,
+          "weight": 0.15,
+          "basis": "mean of 2 measure(s): views per day of existing content, discussion score/comments/answers, views per question or post"
+        },
+        "recency": {
+          "value": null,
+          "weight": 0.1,
+          "basis": "not scored: fewer than 4 dated records"
+        },
+        "audience_fit": {
+          "value": 50.0,
+          "weight": 0.05,
+          "basis": "how well the demand signals' levels match a intermediate audience"
+        }
+      },
+      "indices": {
+        "demand": 58.3,
+        "supply": 57.9,
+        "gap": 78.5
+      },
+      "demand": {
+        "evidence": 7,
+        "signals": 7,
+        "source_types": {
+          "stackoverflow": 5,
+          "hackernews": 2
+        }
+      },
+      "supply": {
+        "evidence": 11,
+        "effective": 5.5,
+        "creators": 1
+      },
+      "growth": {
+        "direction": "unknown",
+        "reason": "0 items in the recent 45 days vs 0 in the prior 45 days (github, hackernews, stackoverflow); only 0 items matched across both windows (need 20)"
+      },
+      "competitor_blind_spot": null,
+      "gap_details": {
+        "supply_pieces": 11,
+        "levels_missing": null,
+        "formats_missing": [
+          "case-study",
+          "talk",
+          "reference"
+        ],
+        "target_level_share": null
+      },
+      "top_statements": [
+        "Unnecessary re-renders are hard to find and prevent",
+        "Re-render behaviour draws steady interest"
+      ],
+      "evidence_ids": {
+        "demand": [
+          "e-fc1cd300",
+          "e-7cc2502e",
+          "e-43c4fd00",
+          "e-a5a5d94b",
+          "e-bfc76500",
+          "e-149e9dd4",
+          "e-2ba6fee8"
+        ],
+        "supply": [
+          "e-fbdefee6",
+          "e-5bdf64b1",
+          "e-10a9fa8c",
+          "e-5d944e56",
+          "e-31fb60a6",
+          "e-9e81fa22",
+          "e-e19ae508",
+          "e-d750a571",
+          "e-f77bcc71",
+          "e-f421c174",
+          "e-5cf7a0c6"
+        ]
+      },
+      "notes": [
+        "Trend direction is unknown (too few dated records), so growth was left out.",
+        "Left out of the score: growth, recency."
+      ],
+      "rank": 4
+    },
+    {
+      "topic": "memory-leaks",
+      "label": "Memory leaks",
+      "score": 46.5,
+      "tier": "ignore",
+      "confidence": "medium",
+      "coverage": 0.7,
+      "components": {
+        "demand": {
+          "value": 46.7,
+          "weight": 0.3,
+          "basis": "7 evidence records from 1 source type(s), scaled to the strongest topic"
+        },
+        "growth": {
+          "value": null,
+          "weight": 0.2,
+          "basis": "unknown: 1 item in the recent 45 days vs 3 in the prior 45 days (github, hackernews, stackoverflow); only 4 items matched across both windows (need 20)"
+        },
+        "content_gap": {
+          "value": 70.4,
+          "weight": 0.2,
+          "basis": "7 demand records vs 6.25 effective supply"
+        },
+        "engagement": {
+          "value": 13.3,
+          "weight": 0.15,
+          "basis": "mean of 1 measure(s): views per day of existing content, discussion score/comments/answers, views per question or post"
+        },
+        "recency": {
+          "value": null,
+          "weight": 0.1,
+          "basis": "not scored: fewer than 4 dated records"
+        },
+        "audience_fit": {
+          "value": 50.0,
+          "weight": 0.05,
+          "basis": "how well the demand signals' levels match a intermediate audience"
+        }
+      },
+      "indices": {
+        "demand": 46.7,
+        "supply": 65.8,
+        "gap": 70.4
+      },
+      "demand": {
+        "evidence": 7,
+        "signals": 7,
+        "source_types": {
+          "github": 7
+        }
+      },
+      "supply": {
+        "evidence": 13,
+        "effective": 6.25,
+        "creators": 3
+      },
+      "growth": {
+        "direction": "unknown",
+        "reason": "1 item in the recent 45 days vs 3 in the prior 45 days (github, hackernews, stackoverflow); only 4 items matched across both windows (need 20)"
+      },
+      "competitor_blind_spot": null,
+      "gap_details": {
+        "supply_pieces": 13,
+        "levels_missing": null,
+        "formats_missing": [
+          "explainer",
+          "case-study",
+          "talk",
+          "reference"
+        ],
+        "target_level_share": null
+      },
+      "top_statements": [
+        "React apps keep memory alive after components unmount"
+      ],
+      "evidence_ids": {
+        "demand": [
+          "e-ab639539",
+          "e-a5fbbfff",
+          "e-4d8e4d7e",
+          "e-eb305b86",
+          "e-ee5e6025",
+          "e-817a5cd5",
+          "e-215aca62"
+        ],
+        "supply": [
+          "e-a4a4ced9",
+          "e-6c24da47",
+          "e-2da01fbb",
+          "e-6d787920",
+          "e-660a96da",
+          "e-b524699f",
+          "e-479fca11",
+          "e-6d520d52",
+          "e-b99d7c57",
+          "e-5c0f50e8",
+          "e-4a1b4dc7",
+          "e-8ad1305a",
+          "e-f65fcd7f"
+        ]
+      },
+      "notes": [
+        "Trend direction is unknown (too few dated records), so growth was left out.",
+        "Left out of the score: growth, recency."
+      ],
+      "rank": 5
+    },
+    {
+      "topic": "state-management-performance",
+      "label": "Context and store performance",
+      "score": 27.9,
+      "tier": "ignore",
+      "confidence": "low",
+      "coverage": 0.7,
+      "components": {
+        "demand": {
+          "value": 20.0,
+          "weight": 0.3,
+          "basis": "3 evidence records from 1 source type(s), scaled to the strongest topic"
+        },
+        "growth": {
+          "value": null,
+          "weight": 0.2,
+          "basis": "unknown: 3 items in the recent 45 days vs 3 in the prior 45 days (github, hackernews, stackoverflow); only 6 items matched across both windows (need 20)"
+        },
+        "content_gap": {
+          "value": 43.8,
+          "weight": 0.2,
+          "basis": "3 demand records vs 4.00 effective supply"
+        },
+        "engagement": {
+          "value": 15.3,
+          "weight": 0.15,
+          "basis": "mean of 2 measure(s): views per day of existing content, discussion score/comments/answers, views per question or post"
+        },
+        "recency": {
+          "value": null,
+          "weight": 0.1,
+          "basis": "not scored: fewer than 4 dated records"
+        },
+        "audience_fit": {
+          "value": 50.0,
+          "weight": 0.05,
+          "basis": "how well the demand signals' levels match a intermediate audience"
+        }
+      },
+      "indices": {
+        "demand": 20.0,
+        "supply": 42.1,
+        "gap": 43.8
+      },
+      "demand": {
+        "evidence": 3,
+        "signals": 3,
+        "source_types": {
+          "stackoverflow": 3
+        }
+      },
+      "supply": {
+        "evidence": 8,
+        "effective": 4.0,
+        "creators": 0
+      },
+      "growth": {
+        "direction": "unknown",
+        "reason": "3 items in the recent 45 days vs 3 in the prior 45 days (github, hackernews, stackoverflow); only 6 items matched across both windows (need 20)"
+      },
+      "competitor_blind_spot": null,
+      "gap_details": {
+        "supply_pieces": 8,
+        "levels_missing": null,
+        "formats_missing": [
+          "case-study",
+          "talk",
+          "reference"
+        ],
+        "target_level_share": null
+      },
+      "top_statements": [
+        "Large stores and context updates slow React apps down"
+      ],
+      "evidence_ids": {
+        "demand": [
+          "e-ca74c7aa",
+          "e-d02c8045",
+          "e-a531c819"
+        ],
+        "supply": [
+          "e-fd5f299e",
+          "e-89982a98",
+          "e-0845dd04",
+          "e-a83d41d7",
+          "e-9115c896",
+          "e-92c2dab0",
+          "e-d542d60c",
+          "e-3429ec01"
+        ]
+      },
+      "notes": [
+        "Trend direction is unknown (too few dated records), so growth was left out.",
+        "Left out of the score: growth, recency."
+      ],
+      "rank": 6
+    },
+    {
+      "topic": "list-and-render-cost",
+      "label": "Large lists and expensive renders",
+      "score": 26.7,
+      "tier": "ignore",
+      "confidence": "low",
+      "coverage": 0.7,
+      "components": {
+        "demand": {
+          "value": 25.0,
+          "weight": 0.3,
+          "basis": "3 evidence records from 2 source type(s), scaled to the strongest topic"
+        },
+        "growth": {
+          "value": null,
+          "weight": 0.2,
+          "basis": "unknown: 1 item in the recent 45 days vs 0 in the prior 45 days (github, hackernews, stackoverflow); only 1 item matched across both windows (need 20)"
+        },
+        "content_gap": {
+          "value": 38.0,
+          "weight": 0.2,
+          "basis": "3 demand records vs 4.75 effective supply"
+        },
+        "engagement": {
+          "value": 7.1,
+          "weight": 0.15,
+          "basis": "mean of 2 measure(s): views per day of existing content, discussion score/comments/answers, views per question or post"
+        },
+        "recency": {
+          "value": null,
+          "weight": 0.1,
+          "basis": "not scored: fewer than 4 dated records"
+        },
+        "audience_fit": {
+          "value": 50.0,
+          "weight": 0.05,
+          "basis": "how well the demand signals' levels match a intermediate audience"
+        }
+      },
+      "indices": {
+        "demand": 25.0,
+        "supply": 50.0,
+        "gap": 38.0
+      },
+      "demand": {
+        "evidence": 3,
+        "signals": 3,
+        "source_types": {
+          "stackoverflow": 2,
+          "github": 1
+        }
+      },
+      "supply": {
+        "evidence": 10,
+        "effective": 4.75,
+        "creators": 0
+      },
+      "growth": {
+        "direction": "unknown",
+        "reason": "1 item in the recent 45 days vs 0 in the prior 45 days (github, hackernews, stackoverflow); only 1 item matched across both windows (need 20)"
+      },
+      "competitor_blind_spot": null,
+      "gap_details": {
+        "supply_pieces": 10,
+        "levels_missing": null,
+        "formats_missing": [
+          "talk",
+          "reference"
+        ],
+        "target_level_share": null
+      },
+      "top_statements": [
+        "Large lists and trees render slowly"
+      ],
+      "evidence_ids": {
+        "demand": [
+          "e-26026fa2",
+          "e-05986954",
+          "e-c693c6cd"
+        ],
+        "supply": [
+          "e-71894de0",
+          "e-45973415",
+          "e-bc88df50",
+          "e-b14ff7ab",
+          "e-c4b2d726",
+          "e-0d04c234",
+          "e-10d2d7e9",
+          "e-46b02feb",
+          "e-ea83006b",
+          "e-f3faac58"
+        ]
+      },
+      "notes": [
+        "Trend direction is unknown (too few dated records), so growth was left out.",
+        "Left out of the score: growth, recency."
+      ],
+      "rank": 7
+    }
+  ],
+  "unscored": [
+    {
+      "topic": "optimization-roundups",
+      "reason": "0 demand evidence records (needs 3)"
+    },
+    {
+      "topic": "react-native-performance",
+      "reason": "0 demand evidence records (needs 3)"
+    }
+  ],
+  "warnings": [
+    "Scores rank topics within this run only; they are not comparable across runs, and the weights and thresholds are heuristics."
+  ]
+}

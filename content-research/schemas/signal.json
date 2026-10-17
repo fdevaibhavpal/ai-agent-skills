@@ -6,7 +6,7 @@
   "required": ["type", "topic", "statement", "quote", "evidence_id"],
   "properties": {
     "signal_id": {"type": "string", "pattern": "^s-[0-9a-f]{8}$"},
-    "type": {"type": "string", "enum": ["pain_point", "question", "controversy", "misconception", "request", "coverage"]},
+    "type": {"type": "string", "enum": ["pain_point", "question", "controversy", "misconception", "request", "interest", "coverage"]},
     "topic": {"type": "string", "minLength": 1},
     "statement": {"type": "string", "minLength": 8},
     "quote": {"type": "string", "minLength": 8},

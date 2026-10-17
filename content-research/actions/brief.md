@@ -17,7 +17,7 @@ If the user passes an opportunity from an earlier `gaps` or `ideas` run in this 
 
 See [`_config.md`](_config.md).
 
-- **Required:** `topic` (the chosen opportunity), `audience`, `platforms`
+- **Required:** `topic` (the chosen opportunity), `audience`, `audience_level`, `platforms`
 - **Optional (defaults apply):** `sources`, `period`, `depth`
 - **Advanced:** `goal`, `profile`, `competitors`, `geography`, `language`
 

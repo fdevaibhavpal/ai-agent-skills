@@ -10,7 +10,7 @@ All stages are implemented (Modules 03–05). Claims are not independently verif
 
 `research` (collect through analyze, see [`_pipeline.md`](_pipeline.md)) `→ write trend report`
 
-Trend directions come from `analysis.json` (`trends`), classified by `scripts/analyze.py`; the agent explains them and does not reclassify.
+Trend directions come from `analysis.json` (`trends`), classified by `scripts/analyze.py`; the agent explains them and does not reclassify. Always run the **period pass** (date-limited demand queries) and `scripts/volume.py`: without them most items are years old and nearly every topic reads "unknown". Volume totals come from the sources themselves and are compared with a platform baseline, so a platform-wide slump is not read as a topic decline.
 
 ## Configuration
 

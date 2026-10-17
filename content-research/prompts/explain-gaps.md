@@ -9,7 +9,7 @@ Goal: turn `opportunities.json` into a ranked gap report the creator can act on.
 - The configured audience, platforms and period
 - The source availability table
 
-Write the report with [`../templates/gap-report.md`](../templates/gap-report.md). Follow the rules in [`summarize-analysis.md`](summarize-analysis.md) as well.
+Write the report with [`../templates/gap-report.md`](../templates/gap-report.md), pasting the ranked table and bars from `python3 scripts/render.py gaps opportunities.json` unchanged. Follow the rules in [`summarize-analysis.md`](summarize-analysis.md) as well.
 
 ## Rules
 
@@ -22,6 +22,8 @@ Write the report with [`../templates/gap-report.md`](../templates/gap-report.md)
   - `competitor_blind_spot` true: competitors have not covered it (only if competitors were analyzed)
   - `gap_details.formats_missing`: a format nobody has used (only if `formats_missing` is not null)
   Angles are recommendations; label them as such.
+- **Supply index null means unmeasured, not zero.** If `indices.supply` or `indices.gap` is null, too little existing content was found to measure it; say that, and do not call the topic underserved.
+- **Competitor blind spots** (`competitor_blind_spot`) are about sampled items from on-topic competitors only. Say "not seen in the sampled items", not "no competitor covers it".
 - **Respect missing data.** `null` components, `levels_missing: null` and the `warnings` mean the data could not support a claim. Say that. In particular, if the content gap was not measured, do not describe any topic as an underserved gap.
 - **Respect confidence.** Say plainly when a topic is low confidence, and what would raise it (more demand records, more source types, dated records).
 - **"No existing content" means none was found** in the collected sources, not none exists. Say it that way.

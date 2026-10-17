@@ -10,7 +10,7 @@ All stages are implemented (Modules 03–05). Claims are not independently verif
 
 `collect → normalize → define topics → extract signals → check signals → analyze → write report`
 
-Each stage is described in [`_pipeline.md`](_pipeline.md). Reuse earlier results from this session if the topic, audience and sources match.
+Each stage is described in [`_pipeline.md`](_pipeline.md). Reuse earlier results from this session if the topic, audience and sources match. This action collects demand and supply (including the targeted supply pass) but does not rank opportunities; end by pointing at `cr-gaps`.
 
 ## Configuration
 

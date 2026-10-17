@@ -8,10 +8,9 @@ license: MIT
 
 Run the `topic` action of the `content-research` skill.
 
-1. Read the router rules in `content-research/SKILL.md`.
-2. Read the action file `content-research/actions/topic.md` and the shared `content-research/actions/_config.md`.
-3. Treat anything the user typed after `cr-topic` as the action's arguments.
-4. Follow the router: collect missing configuration, show the research plan, and report which stages are not implemented yet.
+1. Read `content-research/actions/_fast.md` and the action file `content-research/actions/topic.md`. That is enough for a normal run; open other docs only if a step fails.
+2. Treat anything the user typed after `cr-topic` as the action's arguments.
+3. Follow the fast path: plan in three lines, collect in parallel, run the scripts, write the report from the rendered blocks. If the action's stages are not all implemented, run what is and say which are pending.
 
 Locating the files: when installed, `content-research` is a sibling folder of this one (`../content-research/`). In the repository it is `../../` from here. Use whichever exists.
 

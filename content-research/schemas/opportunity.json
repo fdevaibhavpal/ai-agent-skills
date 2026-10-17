@@ -3,7 +3,7 @@
   "title": "Opportunity",
   "description": "One scored topic, as written by scripts/score.py. Component values are 0-100 or null when the data does not allow them.",
   "type": "object",
-  "required": ["rank", "topic", "label", "score", "tier", "confidence", "coverage", "components", "demand",
+  "required": ["rank", "topic", "label", "score", "tier", "confidence", "coverage", "components", "indices", "demand",
                "supply", "growth", "competitor_blind_spot", "gap_details", "top_statements", "evidence_ids", "notes"],
   "properties": {
     "rank": {"type": "integer", "minimum": 1},
@@ -23,6 +23,16 @@
         "engagement": {"type": "object", "required": ["value", "weight", "basis"], "properties": {"value": {"type": ["number", "null"]}, "weight": {"type": "number"}, "basis": {"type": "string"}}},
         "recency": {"type": "object", "required": ["value", "weight", "basis"], "properties": {"value": {"type": ["number", "null"]}, "weight": {"type": "number"}, "basis": {"type": "string"}}},
         "audience_fit": {"type": "object", "required": ["value", "weight", "basis"], "properties": {"value": {"type": ["number", "null"]}, "weight": {"type": "number"}, "basis": {"type": "string"}}}
+      },
+      "additionalProperties": false
+    },
+    "indices": {
+      "type": "object",
+      "required": ["demand", "supply", "gap"],
+      "properties": {
+        "demand": {"type": ["number", "null"], "minimum": 0, "maximum": 100},
+        "supply": {"type": ["number", "null"], "minimum": 0, "maximum": 100},
+        "gap": {"type": ["number", "null"], "minimum": 0, "maximum": 100}
       },
       "additionalProperties": false
     },

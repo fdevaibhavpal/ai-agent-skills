@@ -10,13 +10,13 @@ All stages are implemented (Modules 03–06). Claims are not independently verif
 
 `research` (collect through analyze) `→ (competitors, if provided) → score → write gap report`
 
-The shared stages are in [`_pipeline.md`](_pipeline.md). Reuse earlier `research` and `competitors` results from this session if the configuration matches. Collect supply sources (YouTube, web) as well as discussion sources, or the content gap cannot be measured.
+The shared stages are in [`_pipeline.md`](_pipeline.md). Reuse earlier `research` and `competitors` results from this session if the configuration matches. Collect supply sources (YouTube, web) as well as discussion sources, and run the targeted supply pass for each high-demand topic, or the content gap will reflect the queries and not the market.
 
 ## Configuration
 
 See [`_config.md`](_config.md).
 
-- **Required:** `topic`, `audience`, `platforms`
+- **Required:** `topic`, `audience`, `audience_level`, `platforms`
 - **Optional (defaults apply):** `sources`, `period`, `depth`, `competitors`
 - **Advanced:** `geography`, `language`, `goal`, `profile`
 

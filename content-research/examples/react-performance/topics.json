@@ -1,0 +1,108 @@
+{
+ "topics": [
+  {
+   "topic": "rerender-debugging",
+   "label": "Finding and preventing unnecessary re-renders",
+   "aliases": [
+    "unnecessary re-renders",
+    "rerenders",
+    "re-render"
+   ],
+   "queries": [
+    "react unnecessary re-renders"
+   ]
+  },
+  {
+   "topic": "memoization-hooks",
+   "label": "useMemo, useCallback and React.memo",
+   "aliases": [
+    "usememo",
+    "usecallback",
+    "react.memo",
+    "memoization"
+   ],
+   "queries": [
+    "react useMemo useCallback"
+   ]
+  },
+  {
+   "topic": "react-compiler",
+   "label": "React Compiler",
+   "aliases": [
+    "compiler",
+    "auto-memoization"
+   ],
+   "queries": [
+    "react compiler"
+   ]
+  },
+  {
+   "topic": "profiling-tools",
+   "label": "Profiling and render-inspection tools",
+   "aliases": [
+    "react profiler",
+    "devtools profiler",
+    "react scan"
+   ],
+   "queries": [
+    "react profiler"
+   ]
+  },
+  {
+   "topic": "memory-leaks",
+   "label": "Memory leaks",
+   "aliases": [
+    "memory leak",
+    "heap growth"
+   ],
+   "queries": [
+    "react memory leak"
+   ]
+  },
+  {
+   "topic": "state-management-performance",
+   "label": "Context and store performance",
+   "aliases": [
+    "context performance",
+    "redux performance",
+    "zustand"
+   ],
+   "queries": [
+    "react context re-render"
+   ]
+  },
+  {
+   "topic": "list-and-render-cost",
+   "label": "Large lists and expensive renders",
+   "aliases": [
+    "virtualization",
+    "windowing",
+    "large lists"
+   ],
+   "queries": [
+    "react large list performance"
+   ]
+  },
+  {
+   "topic": "react-native-performance",
+   "label": "React Native performance",
+   "aliases": [
+    "rn performance"
+   ],
+   "queries": [
+    "react native performance"
+   ]
+  },
+  {
+   "topic": "optimization-roundups",
+   "label": "General optimization guides and tip lists",
+   "aliases": [
+    "performance tips",
+    "optimization techniques"
+   ],
+   "queries": [
+    "react performance optimization"
+   ]
+  }
+ ]
+}

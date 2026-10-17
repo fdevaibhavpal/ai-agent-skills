@@ -28,6 +28,9 @@ MIN_DELTA = 2
 OUTLIER_FACTOR = 3           # views/day at least this many times the competitor's median
 OUTLIER_MIN_ITEMS = 5
 MIN_COMPETITOR_ITEMS = 10    # below this, do not generalize about a competitor
+OFF_TOPIC_SHARE = 0.2        # a competitor with fewer on-topic items than this is not a competitor for the topic
+VOLUME_MIN = 20              # source-reported items across both windows needed to classify a volume trend
+VOLUME_RATIO = 1.5           # change in share of the platform baseline that counts as growing or declining
 YOUNG_DAYS = 3               # views/day on very new or tiny items is noisy
 LOW_VIEWS = 100
 TOP_ITEMS = 10
@@ -64,7 +67,9 @@ def _ordered(ids):
 
 
 def _creator(record):
-    return record["author"] or record["domain"]
+    """Who made it: the named author or channel, or the site for web pages. None when unknown, so a
+    search result that names no channel does not make every YouTube video look like one creator."""
+    return record["author"] or (record["domain"] if record["source_type"] in ("web", "news") else None)
 
 
 # ---------------------------------------------------------------- themes
@@ -106,12 +111,13 @@ def themes(evidence, signals, labels, now):
                 "by_level": dict(Counter(s["level"] for s in demand)),
                 "metrics_total": dict(totals),
                 "evidence_with_metrics": sum(1 for r in demand_records if r["metrics"]),
+                "evidence_with_views": sum(1 for r in demand_records if "views" in r["metrics"]),
                 "top_statements": [first_seen[k] for k, _ in statements.most_common(3)],
             },
             "supply": {
                 "signals": len(supply),
                 "evidence": len(supply_ids),
-                "creators": len({_creator(r) for r in supply_records}),
+                "creators": len({c for c in map(_creator, supply_records) if c}),
                 "by_level": dict(Counter(s["level"] for s in supply)),
                 "by_format": dict(Counter(s["format"] or "unspecified" for s in supply)),
                 "median_views_per_day": round_or_none(median(per_day)),
@@ -169,12 +175,68 @@ def trends(evidence, signals, period_days, now):
             else:
                 outside += 1
         direction, reason = classify(recent, prior, outside, recent + prior)
-        result.append({"topic": topic, "direction": direction, "reason": reason,
+        result.append({"topic": topic, "direction": direction, "reason": reason, "basis": "sample",
                        "recent": recent, "prior": prior, "outside_period": outside,
                        "undated": undated, "demand_recent": recent_d, "demand_prior": prior_d})
-    order = {"emerging": 0, "growing": 1, "stable": 2, "declining": 3, "unknown": 4}
-    result.sort(key=lambda t: (order[t["direction"]], -t["recent"], t["topic"]))
+    return sort_trends(result)
+
+
+TREND_ORDER = {"emerging": 0, "growing": 1, "stable": 2, "declining": 3, "unknown": 4}
+
+
+def sort_trends(result):
+    result.sort(key=lambda t: (TREND_ORDER[t["direction"]], -t["recent"], t["topic"]))
     return result
+
+
+def _items(n):
+    return f"{n} item" + ("" if n == 1 else "s")
+
+
+def classify_volume(recent, prior, base_recent, base_prior):
+    """Direction from item counts the sources themselves reported for two equal windows.
+
+    With a platform baseline (all items on the platform in the same windows) the comparison is of
+    the topic's share, so a platform-wide slump or surge is not mistaken for a topic trend.
+    """
+    total = recent + prior
+    if total < VOLUME_MIN:
+        return "unknown", f"only {_items(total)} matched across both windows (need {VOLUME_MIN})"
+    if prior == 0:
+        return "emerging", f"{_items(recent)} matched in the recent window and none in the prior window"
+    if base_recent and base_prior:
+        ratio = (recent / base_recent) / (prior / base_prior)
+    else:
+        ratio = recent / prior
+    epsilon = 1e-9  # 0.15 / 0.10 is 1.4999999999999998 in floating point; a value on the threshold counts
+    if ratio >= VOLUME_RATIO - epsilon:
+        return "growing", f"share rose by a factor of {ratio:.1f}"
+    if ratio <= 1 / VOLUME_RATIO + epsilon:
+        return "declining", f"share fell to {ratio:.2f} of its earlier level"
+    return "stable", f"share changed by a factor of {ratio:.1f}"
+
+
+def apply_volume(trend_list, volume, half_days):
+    """Replace a topic's direction with the volume-based one where the sources reported counts."""
+    baseline = volume["meta"].get("baseline", {})
+    by_topic = {t["topic"]: t for t in trend_list}
+    for topic, entry in volume["topics"].items():
+        trend = by_topic.get(topic)
+        sources = entry.get("sources", {})
+        if trend is None or not sources:
+            continue
+        recent = sum(c["recent"] for c in sources.values())
+        prior = sum(c["prior"] for c in sources.values())
+        base = [baseline.get(name) for name in sources]
+        have_base = all(b and b["recent"] and b["prior"] for b in base)
+        direction, why = classify_volume(recent, prior, sum(b["recent"] for b in base) if have_base else 0,
+                                         sum(b["prior"] for b in base) if have_base else 0)
+        trend.update(
+            direction=direction, basis="volume",
+            reason=(f"{_items(recent)} in the recent {half_days:g} days vs {prior} in the prior {half_days:g} days "
+                    f"({', '.join(sorted(sources))}); {why}"),
+            volume={"recent": recent, "prior": prior, "sources": sorted(sources), "baseline": have_base})
+    return sort_trends(trend_list)
 
 
 # ---------------------------------------------------------------- engagement
@@ -230,14 +292,17 @@ def competitors(evidence, signals, now, themes_list):
         dated = sorted(parse_time(r["published_at"]) for r in records if r["published_at"])
         span = (dated[-1] - dated[0]).total_seconds() / 86400 if len(dated) > 1 else 0
         cadence = round(len(dated) / max(span, 30) * 30, 1) if len(dated) >= 3 else None
+        topical = sum(1 for r in records if signals_by_evidence[r["evidence_id"]])
+        off_topic = topical / len(records) < OFF_TOPIC_SHARE   # their recent work is about something else
 
         topics, formats = Counter(), Counter()
         for record in records:
             record_topics = {s["topic"] for s in signals_by_evidence[record["evidence_id"]]}
             topics.update(record_topics)
-            for topic in record_topics:
-                topic_creators[topic].add(name)
-                topic_items[topic] += 1
+            if not off_topic:
+                for topic in record_topics:
+                    topic_creators[topic].add(name)
+                    topic_items[topic] += 1
             formats.update(s["format"] or "unspecified" for s in signals_by_evidence[record["evidence_id"]]
                            if s["type"] == "coverage")
 
@@ -254,20 +319,27 @@ def competitors(evidence, signals, now, themes_list):
             "dated_items": len(dated),
             "items_per_30d": cadence,
             "enough_data": len(records) >= MIN_COMPETITOR_ITEMS,
+            "topical_share": round(topical / len(records), 2),
+            "off_topic": off_topic,
             "topics": dict(topics.most_common()),
             "formats": dict(formats),
             "median_views_per_day": round_or_none(typical),
             "top_items": with_views[:5],
             "outliers": outliers,
-            "items_without_signals": sum(1 for r in records if not signals_by_evidence[r["evidence_id"]]),
+            "items_without_signals": len(records) - topical,
+            "sampled_from_latest": any(r["queries"] and r["queries"][0].startswith("channel feed") for r in records),
         })
 
+    on_topic = sum(1 for c in result if not c["off_topic"])
     demand_topics = [t["topic"] for t in themes_list if t["demand"]["evidence"] > 0]
     return {
         "competitors": result,
+        "on_topic": on_topic,
         "topic_coverage": {t: {"competitors": len(c), "items": topic_items[t]}
                            for t, c in sorted(topic_creators.items(), key=lambda kv: (-len(kv[1]), kv[0]))},
-        "demand_topics_no_competitor_coverage": [t for t in demand_topics if t not in topic_creators],
+        # with no on-topic competitor there is nothing to compare against, so no blind spot is claimed
+        "demand_topics_no_competitor_coverage": ([t for t in demand_topics if t not in topic_creators]
+                                                 if on_topic else []),
     }
 
 
@@ -291,8 +363,19 @@ def limits(evidence, signals, trend_list, competitor_block):
         notes.append(f"All evidence comes from one source type ({next(iter(kinds))}); results reflect that source only.")
     unknown = sum(1 for t in trend_list if t["direction"] == "unknown")
     if unknown:
-        notes.append(f"{unknown} of {len(trend_list)} topics have too few dated records to classify a trend.")
-    thin = [c["competitor"] for c in competitor_block["competitors"] if not c["enough_data"]]
+        notes.append(f"{unknown} of {len(trend_list)} topics have too little dated data to classify a trend.")
+    off = [c["competitor"] for c in competitor_block["competitors"] if c["off_topic"]]
+    if off:
+        notes.append(f"Off-topic competitors ({', '.join(off)}): fewer than {OFF_TOPIC_SHARE:.0%} of their sampled items "
+                     "match any topic, so they are left out of topic coverage and blind-spot claims.")
+    if any(c["sampled_from_latest"] for c in competitor_block["competitors"]):
+        notes.append("Competitor items come from each channel's latest uploads only (a feed holds about 15 videos), "
+                     "so absence from a feed does not mean a creator has never covered a topic.")
+    basis_sample = sum(1 for t in trend_list if t["basis"] == "sample" and t["direction"] != "unknown")
+    if basis_sample:
+        notes.append(f"{basis_sample} trend direction(s) rest on counts of collected items, which depend on how many "
+                     "items each query returned; volume counts from the sources (scripts/volume.py) are sturdier.")
+    thin = [c["competitor"] for c in competitor_block["competitors"] if not c["enough_data"] and not c["off_topic"]]
     if thin:
         notes.append(f"Fewer than {MIN_COMPETITOR_ITEMS} items for: {', '.join(thin)}. Do not generalize about them.")
     notes.append("Counts reflect what the searches returned, not the whole web. Trend directions and outliers use "
@@ -303,9 +386,11 @@ def limits(evidence, signals, trend_list, competitor_block):
 # ---------------------------------------------------------------- main
 
 
-def analyze(evidence, signals, labels, period_days, now):
+def analyze(evidence, signals, labels, period_days, now, volume=None):
     theme_list = themes(evidence, signals, labels, now)
     trend_list = trends(evidence, signals, period_days, now)
+    if volume:
+        trend_list = apply_volume(trend_list, volume, period_days / 2)
     competitor_block = competitors(evidence, signals, now, theme_list)
     return {
         "meta": {
@@ -315,7 +400,9 @@ def analyze(evidence, signals, labels, period_days, now):
             "signals": len(signals),
             "topics_defined": len(labels),
             "topics_without_signals": sorted(set(labels) - {t["topic"] for t in theme_list}),
+            "volume_trends": bool(volume),
             "thresholds": {"min_dated": MIN_DATED, "growth_ratio": GROWTH_RATIO, "min_delta": MIN_DELTA,
+                           "volume_min": VOLUME_MIN, "volume_ratio": VOLUME_RATIO,
                            "outlier_factor": OUTLIER_FACTOR, "min_competitor_items": MIN_COMPETITOR_ITEMS},
         },
         "themes": theme_list,
@@ -333,12 +420,22 @@ def main(argv=None, out=None, err=None):
     parser.add_argument("topics")
     parser.add_argument("--period", default="90d", choices=sorted(PERIODS), help="trend window (default 90d)")
     parser.add_argument("--now", metavar="ISO8601", help="end of the window; default is the latest retrieved_at")
+    parser.add_argument("--volume", metavar="volume.json", help="source-reported counts from scripts/volume.py, for sturdier trends")
     args = parser.parse_args(argv)
     out, err = out or sys.stdout, err or sys.stderr
     try:
         evidence = load_evidence(args.evidence)
         _, labels = load_topics(args.topics)
         signals = [json.loads(line) for _, line in read_jsonl(args.signals)]
+        volume = None
+        if args.volume:
+            with open(args.volume, encoding="utf-8") as handle:
+                volume = json.load(handle)
+            if "topics" not in volume or "meta" not in volume:
+                raise ConfigError(f"{args.volume} is not a volume.json from scripts/volume.py")
+    except OSError as error:
+        print(f"analyze: cannot read {error.filename}: {error.strerror}", file=err)
+        return 2
     except ConfigError as error:
         print(f"analyze: {error}", file=err)
         return 2
@@ -353,7 +450,7 @@ def main(argv=None, out=None, err=None):
         print("analyze: the evidence file is empty", file=err)
         return 2
     now = parse_time(args.now) if args.now else max(parse_time(r["retrieved_at"]) for r in evidence.values())
-    result = analyze(evidence, signals, labels, PERIODS[args.period], now)
+    result = analyze(evidence, signals, labels, PERIODS[args.period], now, volume)
     json.dump(result, out, indent=2, ensure_ascii=False)
     out.write("\n")
     print(f"analyze: {len(result['themes'])} themes, {len(result['trends'])} trends, "

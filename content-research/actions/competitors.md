@@ -20,7 +20,7 @@ See [`_config.md`](_config.md).
 - **Optional (defaults apply):** `sources`, `period`, `depth`
 - **Advanced:** `audience`, `geography`, `language`, `goal`
 
-If the user gives no competitors, ask whether to discover them automatically. Default to `auto` for this action only.
+If the user gives no competitors, ask for creators or channel ids. Automatic discovery needs a source that names channels (the YouTube API with a key); plain search results give only video titles, so without a key do not guess. Competitors must be topical: a large channel that does not cover the subject is flagged `off_topic` by the analysis and excluded from coverage claims.
 
 ## Output contract
 

@@ -17,7 +17,7 @@ Reuse earlier results from this session if the configuration matches. Never gene
 
 See [`_config.md`](_config.md).
 
-- **Required:** `topic`, `audience`, `platforms`
+- **Required:** `topic`, `audience`, `audience_level`, `platforms`
 - **Optional (defaults apply):** `sources`, `period`, `depth`, `competitors`
 - **Advanced:** `geography`, `language`, `goal`, `profile`
 

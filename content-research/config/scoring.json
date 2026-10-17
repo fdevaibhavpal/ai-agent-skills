@@ -12,6 +12,7 @@
   "level_credit": {"match": 1.0, "unknown": 0.5, "adjacent": 0.25, "distant": 0.0},
   "min_demand_evidence": 3,
   "min_supply_evidence_total": 5,
+  "min_supply_per_topic": 2,
   "min_coverage": 0.5,
   "tiers": [
     {"name": "exceptional", "min": 90},

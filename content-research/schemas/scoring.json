@@ -4,7 +4,7 @@
   "description": "Weights and thresholds for scripts/score.py. See config/scoring.json for the defaults.",
   "type": "object",
   "required": ["weights", "source_diversity_bonus", "growth_scores", "level_credit", "min_demand_evidence",
-               "min_supply_evidence_total", "min_coverage", "tiers", "confidence", "low_confidence_tier_cap"],
+               "min_supply_evidence_total", "min_supply_per_topic", "min_coverage", "tiers", "confidence", "low_confidence_tier_cap"],
   "properties": {
     "weights": {
       "type": "object",
@@ -44,6 +44,7 @@
     },
     "min_demand_evidence": {"type": "integer", "minimum": 1},
     "min_supply_evidence_total": {"type": "integer", "minimum": 0},
+    "min_supply_per_topic": {"type": "integer", "minimum": 0},
     "min_coverage": {"type": "number", "minimum": 0, "maximum": 1},
     "tiers": {
       "type": "array",
