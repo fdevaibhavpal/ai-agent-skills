@@ -60,6 +60,16 @@ class PipelineTests(unittest.TestCase):
             self.assertEqual(theme["demand"]["metrics_total"], {"score": 40, "comments": 12})
             self.assertEqual(analysis["meta"]["now"], "2026-10-17T12:00:00Z")
             self.assertTrue(any("not been independently verified" in n for n in analysis["limits"]))
+            with open(path("analysis.json"), "w") as f:
+                f.write(out)
+
+            # one demand record is below the minimum, so nothing is scored, and the script says so
+            code, out, err = run("score.py", path("analysis.json"), "--audience-level", "advanced")
+            self.assertEqual(code, 0, err)
+            scores = json.loads(out)
+            self.assertEqual(scores["opportunities"], [])
+            self.assertEqual(scores["unscored"][0]["topic"], "profiling")
+            self.assertTrue(any("No topic had enough demand" in w for w in scores["warnings"]))
 
     def test_scripts_report_missing_inputs_cleanly(self):
         code, out, err = run("signals.py", "nope.jsonl", "nope.json", "nope.jsonl")

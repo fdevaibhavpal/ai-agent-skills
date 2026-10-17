@@ -4,7 +4,7 @@ Investigate one topic in depth. Use it when the user already knows what they wan
 
 ## Status
 
-Router, configuration, collection, normalization and analysis (Modules 02–05): implemented.
+Router, configuration, collection, normalization, analysis and gap scoring (Modules 02–06): implemented.
 Pending stages: topic report (Module 08).
 
 ## Runs

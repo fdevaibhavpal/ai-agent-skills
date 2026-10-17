@@ -1,0 +1,28 @@
+{
+  "weights": {
+    "demand": 0.30,
+    "growth": 0.20,
+    "content_gap": 0.20,
+    "engagement": 0.15,
+    "recency": 0.10,
+    "audience_fit": 0.05
+  },
+  "source_diversity_bonus": 0.25,
+  "growth_scores": {"emerging": 100, "growing": 80, "stable": 50, "declining": 15},
+  "level_credit": {"match": 1.0, "unknown": 0.5, "adjacent": 0.25, "distant": 0.0},
+  "min_demand_evidence": 3,
+  "min_supply_evidence_total": 5,
+  "min_coverage": 0.5,
+  "tiers": [
+    {"name": "exceptional", "min": 90},
+    {"name": "strong", "min": 80},
+    {"name": "interesting", "min": 70},
+    {"name": "marginal", "min": 60},
+    {"name": "ignore", "min": 0}
+  ],
+  "confidence": {
+    "high": {"demand_evidence": 8, "source_types": 2, "coverage": 0.8},
+    "medium": {"demand_evidence": 5, "source_types": 1, "coverage": 0.6}
+  },
+  "low_confidence_tier_cap": "interesting"
+}

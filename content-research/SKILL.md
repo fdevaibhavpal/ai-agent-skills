@@ -1,6 +1,6 @@
 ---
 name: content-research
-description: A reusable agent skill for researching content opportunities across web sources, Reddit, YouTube, GitHub, news, and competitor content. Routes requests for trends, competitor analysis, content gaps, topic validation, content ideas and briefs. Status - research, trends and competitors reports work end to end; gap scoring, ideas, briefs and claim verification are still being built.
+description: A reusable agent skill for researching content opportunities across web sources, Reddit, YouTube, GitHub, news, and competitor content. Routes requests for trends, competitor analysis, content gaps, topic validation, content ideas and briefs. Status - research, trends, competitors and gaps reports work end to end; ideas, briefs, validation and claim verification are still being built.
 license: MIT
 ---
 
@@ -8,7 +8,7 @@ license: MIT
 
 A skill for finding out what to create: it gathers evidence about a topic, compares audience demand with existing content, and turns the result into cited content opportunities.
 
-> **Status (Module 05): `research`, `trends` and `competitors` run end to end. The others stop before their later stages.** The skill can pick an action, collect configuration, show a research plan, collect and normalize sources, extract and check signals, and analyze them. Gap scoring, ideas, briefs and claim verification are not implemented yet, so `gaps`, `ideas`, `validate`, `topic`, `brief` and `full` stop after the plan (or after normalization with `--collect-only`) and name the pending stages. Reports state that claims were not independently verified. Never improvise research and present it as this skill's output.
+> **Status (Module 06): `research`, `trends`, `competitors` and `gaps` run end to end. The others stop before their later stages.** The skill can pick an action, collect configuration, show a research plan, collect and normalize sources, extract and check signals, analyze them, and score content gaps. Ideas, topic reports, briefs, validation verdicts and claim verification are not implemented yet, so `ideas`, `validate`, `topic`, `brief` and `full` stop after the plan (or after normalization with `--collect-only`) and name the pending stages. Reports state that claims were not independently verified. Never improvise research and present it as this skill's output.
 
 ## Commands
 
@@ -49,7 +49,7 @@ The entry points for the short commands live in [`commands/`](commands/). They o
 3. **Load the action file** and [`actions/_config.md`](actions/_config.md). Read only those, not the other actions.
 4. **Collect configuration** following `_config.md`: ask only what is missing, in one message, and apply defaults for the rest.
 5. **Show the research plan** (format in `_config.md`), with the stages the action runs.
-6. **Run the stages**, reusing results already produced in this session. Collection follows [`sources/_contract.md`](sources/_contract.md) and the guide for each selected source: [web](sources/web.md), [reddit](sources/reddit.md), [youtube](sources/youtube.md), [github](sources/github.md), [news](sources/news.md), [competitors](sources/competitors.md). Everything after collection follows [`actions/_pipeline.md`](actions/_pipeline.md): normalize, define topics, extract signals, check them with `scripts/signals.py`, analyze with `scripts/analyze.py`, then write the report. Cite evidence by `evidence_id`.
+6. **Run the stages**, reusing results already produced in this session. Collection follows [`sources/_contract.md`](sources/_contract.md) and the guide for each selected source: [web](sources/web.md), [reddit](sources/reddit.md), [youtube](sources/youtube.md), [github](sources/github.md), [news](sources/news.md), [competitors](sources/competitors.md). Everything after collection follows [`actions/_pipeline.md`](actions/_pipeline.md): normalize, define topics, extract signals, check them with `scripts/signals.py`, analyze with `scripts/analyze.py`, score gaps with `scripts/score.py` (gap actions), then write the report. Cite evidence by `evidence_id`.
 7. **Report** in the action's output contract. If every stage of the action is implemented, finish the report. If a later stage is pending, stop after step 5, or after normalization if the user passed `--collect-only`, and list the pending stages.
 
 ## Composition
@@ -102,9 +102,9 @@ Signal Extraction            ← planned
   ↓
 Trend / Demand / Competitor Analysis
   ↓
-Gap Detection
+Gap Detection                ← implemented (Module 06)
   ↓
-Opportunity Scoring
+Opportunity Scoring          ← implemented (Module 06)
   ↓
 Ideas / Brief
   ↓
@@ -122,17 +122,17 @@ Collection and analysis stay separate: the pipeline is a fixed sequence of steps
 | `actions/` | One workflow file per action, plus shared `_config.md` | Module 02 |
 | `commands/` | One entry point per `cr-*` command | Module 02 |
 | `sources/` | Source contract and one guide per source | Module 03 |
-| `scripts/` | Small Python 3 (stdlib only) helpers: `record.py`, `github.py`, `youtube.py`, `schema_check.py`, `normalize.py`, `signals.py`, `analyze.py` so far | Modules 03–09 |
-| `schemas/` | JSON schemas: `source.json`, `evidence.json`, `signal.json`, `topics.json` so far; opportunities follow | Module 04 onward |
-| `prompts/` | Prompts: `define-topics`, `extract-signals`, `summarize-analysis` so far | Module 05 onward |
-| `templates/` | Report templates: research, trend, competitor so far; briefs follow | Modules 05, 08 |
+| `config/` | `scoring.json`: scoring weights and thresholds | Module 06 |
+| `scripts/` | Small Python 3 (stdlib only) helpers: `record.py`, `github.py`, `youtube.py`, `schema_check.py`, `normalize.py`, `signals.py`, `analyze.py`, `score.py` so far | Modules 03–09 |
+| `schemas/` | JSON schemas: `source.json`, `evidence.json`, `signal.json`, `topics.json`, `opportunity.json`, `scoring.json` | Module 04 onward |
+| `prompts/` | Prompts: `define-topics`, `extract-signals`, `summarize-analysis`, `explain-gaps` so far | Module 05 onward |
+| `templates/` | Report templates: research, trend, competitor, gap so far; ideas and briefs follow | Modules 05–08 |
 | `examples/` | Sample configurations and outputs | Modules 07, 11 |
 | `tests/` | `unittest` tests and fixtures for the scripts | Alongside each script |
 
 ## TODO (planned, not implemented)
 
 - A Reddit API helper (Reddit is collected through web search only for now)
-- Gap detection and opportunity scoring
 - Idea and brief generation
 - Verification of URLs and claims
 - Tests, documentation and CI

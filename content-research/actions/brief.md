@@ -4,8 +4,8 @@ Turn a chosen opportunity into a detailed content brief the creator can produce 
 
 ## Status
 
-Router, configuration, collection, normalization and analysis (Modules 02–05): implemented.
-Pending stages: gaps (Module 06), brief generation (Module 08).
+Router, configuration, collection, normalization, analysis and gap scoring (Modules 02–06): implemented.
+Pending stages: topic report and brief generation (Module 08).
 
 ## Runs
 

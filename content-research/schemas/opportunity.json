@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Opportunity",
+  "description": "One scored topic, as written by scripts/score.py. Component values are 0-100 or null when the data does not allow them.",
+  "type": "object",
+  "required": ["rank", "topic", "label", "score", "tier", "confidence", "coverage", "components", "demand",
+               "supply", "growth", "competitor_blind_spot", "gap_details", "top_statements", "evidence_ids", "notes"],
+  "properties": {
+    "rank": {"type": "integer", "minimum": 1},
+    "topic": {"type": "string", "minLength": 1},
+    "label": {"type": "string", "minLength": 1},
+    "score": {"type": "number", "minimum": 0, "maximum": 100},
+    "tier": {"type": "string", "minLength": 1},
+    "confidence": {"type": "string", "enum": ["high", "medium", "low"]},
+    "coverage": {"type": "number", "minimum": 0, "maximum": 1},
+    "components": {
+      "type": "object",
+      "required": ["demand", "growth", "content_gap", "engagement", "recency", "audience_fit"],
+      "properties": {
+        "demand": {"type": "object", "required": ["value", "weight", "basis"], "properties": {"value": {"type": ["number", "null"]}, "weight": {"type": "number"}, "basis": {"type": "string"}}},
+        "growth": {"type": "object", "required": ["value", "weight", "basis"], "properties": {"value": {"type": ["number", "null"]}, "weight": {"type": "number"}, "basis": {"type": "string"}}},
+        "content_gap": {"type": "object", "required": ["value", "weight", "basis"], "properties": {"value": {"type": ["number", "null"]}, "weight": {"type": "number"}, "basis": {"type": "string"}}},
+        "engagement": {"type": "object", "required": ["value", "weight", "basis"], "properties": {"value": {"type": ["number", "null"]}, "weight": {"type": "number"}, "basis": {"type": "string"}}},
+        "recency": {"type": "object", "required": ["value", "weight", "basis"], "properties": {"value": {"type": ["number", "null"]}, "weight": {"type": "number"}, "basis": {"type": "string"}}},
+        "audience_fit": {"type": "object", "required": ["value", "weight", "basis"], "properties": {"value": {"type": ["number", "null"]}, "weight": {"type": "number"}, "basis": {"type": "string"}}}
+      },
+      "additionalProperties": false
+    },
+    "demand": {
+      "type": "object",
+      "required": ["evidence", "signals", "source_types"],
+      "properties": {"evidence": {"type": "integer", "minimum": 0}, "signals": {"type": "integer", "minimum": 0}, "source_types": {"type": "object"}}
+    },
+    "supply": {
+      "type": "object",
+      "required": ["evidence", "effective", "creators"],
+      "properties": {"evidence": {"type": "integer", "minimum": 0}, "effective": {"type": "number", "minimum": 0}, "creators": {"type": "integer", "minimum": 0}}
+    },
+    "growth": {
+      "type": "object",
+      "required": ["direction", "reason"],
+      "properties": {"direction": {"type": "string"}, "reason": {"type": "string"}}
+    },
+    "competitor_blind_spot": {"type": ["boolean", "null"]},
+    "gap_details": {
+      "type": "object",
+      "required": ["supply_pieces", "levels_missing", "formats_missing", "target_level_share"],
+      "properties": {
+        "supply_pieces": {"type": "integer", "minimum": 0},
+        "levels_missing": {"type": ["array", "null"], "items": {"type": "string"}},
+        "formats_missing": {"type": ["array", "null"], "items": {"type": "string"}},
+        "target_level_share": {"type": ["number", "null"], "minimum": 0, "maximum": 1}
+      }
+    },
+    "top_statements": {"type": "array", "items": {"type": "string"}},
+    "evidence_ids": {
+      "type": "object",
+      "required": ["demand", "supply"],
+      "properties": {"demand": {"type": "array", "items": {"type": "string"}}, "supply": {"type": "array", "items": {"type": "string"}}}
+    },
+    "notes": {"type": "array", "items": {"type": "string"}}
+  },
+  "additionalProperties": false
+}

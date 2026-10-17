@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Scoring configuration",
+  "description": "Weights and thresholds for scripts/score.py. See config/scoring.json for the defaults.",
+  "type": "object",
+  "required": ["weights", "source_diversity_bonus", "growth_scores", "level_credit", "min_demand_evidence",
+               "min_supply_evidence_total", "min_coverage", "tiers", "confidence", "low_confidence_tier_cap"],
+  "properties": {
+    "weights": {
+      "type": "object",
+      "required": ["demand", "growth", "content_gap", "engagement", "recency", "audience_fit"],
+      "properties": {
+        "demand": {"type": "number", "minimum": 0},
+        "growth": {"type": "number", "minimum": 0},
+        "content_gap": {"type": "number", "minimum": 0},
+        "engagement": {"type": "number", "minimum": 0},
+        "recency": {"type": "number", "minimum": 0},
+        "audience_fit": {"type": "number", "minimum": 0}
+      },
+      "additionalProperties": false
+    },
+    "source_diversity_bonus": {"type": "number", "minimum": 0},
+    "growth_scores": {
+      "type": "object",
+      "required": ["emerging", "growing", "stable", "declining"],
+      "properties": {
+        "emerging": {"type": "number", "minimum": 0, "maximum": 100},
+        "growing": {"type": "number", "minimum": 0, "maximum": 100},
+        "stable": {"type": "number", "minimum": 0, "maximum": 100},
+        "declining": {"type": "number", "minimum": 0, "maximum": 100}
+      },
+      "additionalProperties": false
+    },
+    "level_credit": {
+      "type": "object",
+      "required": ["match", "unknown", "adjacent", "distant"],
+      "properties": {
+        "match": {"type": "number", "minimum": 0, "maximum": 1},
+        "unknown": {"type": "number", "minimum": 0, "maximum": 1},
+        "adjacent": {"type": "number", "minimum": 0, "maximum": 1},
+        "distant": {"type": "number", "minimum": 0, "maximum": 1}
+      },
+      "additionalProperties": false
+    },
+    "min_demand_evidence": {"type": "integer", "minimum": 1},
+    "min_supply_evidence_total": {"type": "integer", "minimum": 0},
+    "min_coverage": {"type": "number", "minimum": 0, "maximum": 1},
+    "tiers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "min"],
+        "properties": {"name": {"type": "string", "minLength": 1}, "min": {"type": "number", "minimum": 0, "maximum": 100}},
+        "additionalProperties": false
+      }
+    },
+    "confidence": {
+      "type": "object",
+      "required": ["high", "medium"],
+      "properties": {
+        "high": {
+          "type": "object",
+          "required": ["demand_evidence", "source_types", "coverage"],
+          "properties": {"demand_evidence": {"type": "integer", "minimum": 0}, "source_types": {"type": "integer", "minimum": 0},
+                         "coverage": {"type": "number", "minimum": 0, "maximum": 1}},
+          "additionalProperties": false
+        },
+        "medium": {
+          "type": "object",
+          "required": ["demand_evidence", "source_types", "coverage"],
+          "properties": {"demand_evidence": {"type": "integer", "minimum": 0}, "source_types": {"type": "integer", "minimum": 0},
+                         "coverage": {"type": "number", "minimum": 0, "maximum": 1}},
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "low_confidence_tier_cap": {"type": "string", "minLength": 1}
+  },
+  "additionalProperties": false
+}

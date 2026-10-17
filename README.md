@@ -15,7 +15,7 @@ Each skill is a self-contained folder: Markdown instructions the agent follows, 
 
 | Skill | Status | Description |
 |---|---|---|
-| [`content-research`](content-research/SKILL.md) | In development (Module 05: analysis) | Research content opportunities across the web, Reddit, YouTube, GitHub, news and competitor content. Research, trends and competitors reports work end to end; gap scoring, ideas, briefs and verification are not implemented yet. |
+| [`content-research`](content-research/SKILL.md) | In development (Module 06: gap scoring) | Research content opportunities across the web, Reddit, YouTube, GitHub, news and competitor content. Research, trends, competitors and gap reports work end to end; ideas, briefs, validation and verification are not implemented yet. |
 
 More skills may be added later. Only `content-research` is in progress.
 
@@ -36,6 +36,7 @@ ai-agent-skills/
     ├── actions/            # per-action workflows and shared config rules
     ├── commands/           # cr-* entry points that route to the actions
     ├── sources/            # source contract and per-source collection guides
+    ├── config/             # scoring weights and thresholds
     ├── scripts/            # deterministic helpers (Python 3 stdlib only)
     ├── schemas/            # JSON schemas for evidence and reports
     ├── prompts/            # prompt fragments used by actions

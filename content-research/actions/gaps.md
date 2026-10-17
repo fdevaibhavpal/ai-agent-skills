@@ -4,14 +4,13 @@ Find topics where audience demand is high and existing content supply is low.
 
 ## Status
 
-Router, configuration, collection, normalization and analysis (Modules 02–05): implemented.
-Pending stages: gap detection and scoring (Module 06).
+All stages are implemented (Modules 03–06). Claims are not independently verified yet (Module 09), and reports must say so.
 
 ## Runs
 
-`research → (competitors, if provided) → detect gaps → score`
+`research` (collect through analyze) `→ (competitors, if provided) → score → write gap report`
 
-Reuse earlier `research` and `competitors` results from this session if the configuration matches.
+The shared stages are in [`_pipeline.md`](_pipeline.md). Reuse earlier `research` and `competitors` results from this session if the configuration matches. Collect supply sources (YouTube, web) as well as discussion sources, or the content gap cannot be measured.
 
 ## Configuration
 
@@ -23,9 +22,9 @@ See [`_config.md`](_config.md).
 
 ## Method
 
-Compare **demand** (questions, pain points and discussion volume from forums, issues and search) against **supply** (existing videos, posts and articles, weighted by how well they serve this audience). A gap is high demand with low or poorly matched supply. Beginner-level supply does not cover an advanced audience's demand.
+Compare **demand** (questions, pain points and discussion from forums, issues and search) against **supply** (existing videos, posts and articles). A gap is high demand with low or poorly matched supply. When an audience level is known, supply is weighted by how well it matches: content at the audience's level counts fully, adjacent levels count a quarter, distant levels count nothing, and content of unknown level counts half. Beginner-level supply does not cover an advanced audience's demand.
 
-The opportunity score comes from a script with fixed weights (Module 06), not from the model's judgment. The model explains the score; it does not produce it.
+`scripts/score.py` computes the score from six weighted components (demand, growth, content gap, engagement, recency, audience fit), using `config/scoring.json`. A component the data cannot support is left out and the other weights are renormalized, never counted as zero. Topics need at least 3 demand records to be scored. The model explains the score; it does not produce or change it. See [`../prompts/explain-gaps.md`](../prompts/explain-gaps.md).
 
 ## Output contract
 
@@ -34,4 +33,4 @@ The opportunity score comes from a script with fixed weights (Module 06), not fr
 3. Sources
 4. Confidence and limits
 
-Mark demand and supply figures as observed counts or as estimates. Never present an estimate as a measurement.
+Write it with [`../templates/gap-report.md`](../templates/gap-report.md). Counts are observed counts of what the searches returned; the score is a heuristic ranking within this run. Never present either as a measurement of the whole market.
