@@ -4,8 +4,8 @@ The complete workflow: research, trends, competitors, gaps, ideas and a brief fo
 
 ## Status
 
-Router, configuration, collection and normalization: implemented.
-Pending stages: extraction and analysis (Module 05), gaps and scoring (Module 06), ideas (Module 07), brief (Module 08), verification (Module 09).
+Router, configuration, collection, normalization and analysis (Modules 02–05): implemented.
+Pending stages: gaps and scoring (Module 06), ideas (Module 07), brief (Module 08), verification (Module 09).
 
 ## Runs
 

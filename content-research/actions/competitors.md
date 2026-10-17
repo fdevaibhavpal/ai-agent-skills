@@ -4,12 +4,13 @@ Analyze competing creators: what they cover, how often, how well it performs, an
 
 ## Status
 
-Router, configuration, collection and normalization: implemented.
-Pending stages: coverage analysis (Module 05).
+All stages are implemented (Modules 03–05). Claims are not independently verified yet (Module 09), and reports must say so.
 
 ## Runs
 
-`discover (if auto) → collect competitor content → normalize → analyze coverage`
+`discover (if auto) → collect competitor content → normalize → define topics → extract signals → check signals → analyze → write report`
+
+The shared stages are in [`_pipeline.md`](_pipeline.md). Competitor figures come from `analysis.json` (`competitors`).
 
 ## Configuration
 
@@ -33,4 +34,4 @@ For each competitor:
 
 Then a cross-competitor view: the most covered topics, the least covered topics, and outliers.
 
-Discovered competitors must be shown to the user with the reason each was chosen, and flagged as discovered rather than provided.
+Write it with [`../templates/competitor-report.md`](../templates/competitor-report.md). Discovered competitors must be shown to the user with the reason each was chosen, and flagged as discovered rather than provided.

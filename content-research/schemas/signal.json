@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Signal",
+  "description": "One thing an evidence record shows about a topic, extracted by the agent and checked by scripts/signals.py. Demand types come from discussion; coverage comes from existing content.",
+  "type": "object",
+  "required": ["type", "topic", "statement", "quote", "evidence_id"],
+  "properties": {
+    "signal_id": {"type": "string", "pattern": "^s-[0-9a-f]{8}$"},
+    "type": {"type": "string", "enum": ["pain_point", "question", "controversy", "misconception", "request", "coverage"]},
+    "topic": {"type": "string", "minLength": 1},
+    "statement": {"type": "string", "minLength": 8},
+    "quote": {"type": "string", "minLength": 8},
+    "evidence_id": {"type": "string", "pattern": "^e-[0-9a-f]{8}$"},
+    "level": {"type": "string", "enum": ["beginner", "intermediate", "advanced", "unknown"]},
+    "format": {"type": ["string", "null"], "enum": ["tutorial", "explainer", "case-study", "talk", "news", "reference", "discussion", "other", null]}
+  },
+  "additionalProperties": false
+}

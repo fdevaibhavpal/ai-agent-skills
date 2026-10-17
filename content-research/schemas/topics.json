@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Topic vocabulary",
+  "description": "The fixed set of topics a run uses, so demand and supply signals can be compared. Slugs and aliases must be unique across the file (checked by scripts/signals.py).",
+  "type": "object",
+  "required": ["topics"],
+  "properties": {
+    "topics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["topic", "label"],
+        "properties": {
+          "topic": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"},
+          "label": {"type": "string", "minLength": 1},
+          "aliases": {"type": "array", "items": {"type": "string", "minLength": 1}}
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

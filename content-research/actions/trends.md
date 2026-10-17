@@ -4,12 +4,13 @@ Identify which topics around a subject are emerging, growing, stable or declinin
 
 ## Status
 
-Router, configuration, collection and normalization: implemented.
-Pending stages: signal extraction and trend classification (Module 05).
+All stages are implemented (Modules 03–05). Claims are not independently verified yet (Module 09), and reports must say so.
 
 ## Runs
 
-`research → classify trends`
+`research` (collect through analyze, see [`_pipeline.md`](_pipeline.md)) `→ write trend report`
+
+Trend directions come from `analysis.json` (`trends`), classified by `scripts/analyze.py`; the agent explains them and does not reclassify.
 
 ## Configuration
 
@@ -28,4 +29,4 @@ See [`_config.md`](_config.md).
 3. Recent developments: releases, announcements or events that explain a change
 4. Confidence and limits
 
-Only classify as growing or declining when the sources provide dated data points. Without dates, report the topic as "present" and say the direction is unknown. Do not infer a trend from a single data point.
+Write it with [`../templates/trend-report.md`](../templates/trend-report.md). Only classify as growing or declining when the sources provide dated data points. Without dates, report the topic as "present" and say the direction is unknown. Do not infer a trend from a single data point.

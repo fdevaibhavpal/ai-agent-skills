@@ -15,7 +15,7 @@ Each skill is a self-contained folder: Markdown instructions the agent follows, 
 
 | Skill | Status | Description |
 |---|---|---|
-| [`content-research`](content-research/SKILL.md) | In development (Module 04: normalization) | Research content opportunities across the web, Reddit, YouTube, GitHub, news and competitor content. Routing, configuration, source collection and normalization work; the analysis stages are not implemented yet. |
+| [`content-research`](content-research/SKILL.md) | In development (Module 05: analysis) | Research content opportunities across the web, Reddit, YouTube, GitHub, news and competitor content. Research, trends and competitors reports work end to end; gap scoring, ideas, briefs and verification are not implemented yet. |
 
 More skills may be added later. Only `content-research` is in progress.
 

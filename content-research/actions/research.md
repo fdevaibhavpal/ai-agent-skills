@@ -4,14 +4,13 @@ Broad content research for a topic. This is the base action: `trends`, `gaps`, `
 
 ## Status
 
-Router, configuration, collection and normalization: implemented. Collection and normalization can be run alone with `--collect-only`.
-Pending stages: signal extraction (Module 05).
+All stages are implemented (Modules 03–05). Claims are not independently verified yet (Module 09), and reports must say so.
 
 ## Runs
 
-`collect → normalize → extract signals → summarize`
+`collect → normalize → define topics → extract signals → check signals → analyze → write report`
 
-Reuse earlier results from this session if the topic, audience and sources match.
+Each stage is described in [`_pipeline.md`](_pipeline.md). Reuse earlier results from this session if the topic, audience and sources match.
 
 ## Configuration
 
@@ -29,7 +28,7 @@ See [`_config.md`](_config.md) for question wording and defaults.
 4. Sources: URL, source type, date retrieved, and what each was used for
 5. Confidence and limits: what could not be checked, and which sources were unavailable
 
-Keep evidence, analysis, inference and recommendation separate (see the principles in `SKILL.md`).
+Write it with [`../templates/research-report.md`](../templates/research-report.md) and [`../prompts/summarize-analysis.md`](../prompts/summarize-analysis.md). Keep evidence, analysis, inference and recommendation separate (see the principles in `SKILL.md`).
 
 ## Edge cases
 
