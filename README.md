@@ -15,7 +15,7 @@ Each skill is a self-contained folder: Markdown instructions the agent follows, 
 
 | Skill | Status | Description |
 |---|---|---|
-| [`content-research`](content-research/SKILL.md) | In development (Module 02: action router) | Research content opportunities across the web, Reddit, YouTube, GitHub, news and competitor content. The router and configuration work; the research stages are not implemented yet. |
+| [`content-research`](content-research/SKILL.md) | In development (Module 03: source layer) | Research content opportunities across the web, Reddit, YouTube, GitHub, news and competitor content. Routing, configuration and source collection work; the analysis stages are not implemented yet. |
 
 More skills may be added later. Only `content-research` is in progress.
 
@@ -35,7 +35,8 @@ ai-agent-skills/
     ├── SKILL.md            # skill entry point and metadata
     ├── actions/            # per-action workflows and shared config rules
     ├── commands/           # cr-* entry points that route to the actions
-    ├── scripts/            # deterministic helpers (Python 3, stdlib only)
+    ├── sources/            # source contract and per-source collection guides
+    ├── scripts/            # deterministic helpers (Python 3 stdlib only)
     ├── schemas/            # JSON schemas for evidence and reports
     ├── prompts/            # prompt fragments used by actions
     ├── templates/          # report and brief templates

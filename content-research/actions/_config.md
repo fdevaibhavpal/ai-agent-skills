@@ -22,6 +22,7 @@ Anything typed after the command is arguments. Free text is the topic (or the id
 | Flag | Setting |
 |---|---|
 | `--advanced` | Advanced mode |
+| `--collect-only` | Run collection only and stop (see `sources/_contract.md`) |
 | `--audience <text>` | `audience` |
 | `--platforms <list>` | `platforms` (comma-separated) |
 | `--sources <list>` | `sources` (comma-separated) |
@@ -64,7 +65,7 @@ When the user describes themselves ("I make YouTube videos for senior developers
 
 ## Capability check
 
-Before running, check which research capabilities the host provides (web search, page fetching, `gh`, and so on). Per-source fallbacks arrive with the source layer; until then, apply this rule: if an action needs a capability that is missing, name the capability, say which action step needs it, and stop. Do not substitute remembered knowledge for research.
+Before running, work out which sources are available using the tiers in [`../sources/_contract.md`](../sources/_contract.md), and include the source availability table in the plan. If an action cannot run without a source that is unavailable (for example, web search for almost everything), name the capability, say which step needs it, and stop. Do not substitute remembered knowledge for research.
 
 ## The plan block
 
@@ -76,11 +77,16 @@ Research plan
   Topic:        ...
   Audience:     ...
   Platforms:    ...
-  Sources:      ... (default: all available)
+  Sources:      ... (default: all available), with the availability table
+  Queries:      the planned queries per source
   Period:       ... Depth: ... Geography: ... Language: ...
   Competitors:  ... (or none)
   Stages:       1. <stage>  2. <stage>  ...
   Reused:       <settings or results reused from this session, or none>
 ```
 
-Then report status for each stage, using the status line in the action file. While any stage is marked pending, stop after the plan and say which stages are not implemented. Do not run partial research and present it as the skill's output.
+Then report status for each stage, using the status line in the action file.
+
+- If every stage is implemented, run them.
+- If a later stage is still pending, run nothing beyond collection, and only when the user passed `--collect-only`. Otherwise stop after the plan and say which stages are not implemented.
+- Never present partial results as the finished output of the action.

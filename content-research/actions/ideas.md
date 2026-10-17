@@ -4,8 +4,8 @@ Generate content ideas that are backed by research evidence, not generic brainst
 
 ## Status
 
-Router and configuration: implemented.
-Pending stages: all of `research` and `gaps` (Modules 03–06), idea generation (Module 07).
+Router, configuration and collection: implemented.
+Pending stages: normalization (Module 04), signal extraction (Module 05), gaps (Module 06), idea generation (Module 07).
 
 ## Runs
 

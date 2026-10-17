@@ -1,0 +1,12 @@
+{"items": [
+  {"id": "vid0000001",
+   "snippet": {"title": "React performance in production", "description": "Profiling walkthrough", "channelTitle": "Some Channel",
+               "channelId": "UCabc", "publishedAt": "2026-09-01T09:00:00Z"},
+   "statistics": {"viewCount": "120345", "likeCount": "4300", "commentCount": "212"},
+   "contentDetails": {"duration": "PT1H2M3S"}},
+  {"id": "vid0000002",
+   "snippet": {"title": "Why memo is not enough", "description": "", "channelTitle": "Other", "channelId": "UCdef",
+               "publishedAt": "2026-10-10T09:00:00Z"},
+   "statistics": {"viewCount": "900"},
+   "contentDetails": {"duration": "PT45S"}}
+]}

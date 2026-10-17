@@ -4,8 +4,8 @@ Identify which topics around a subject are emerging, growing, stable or declinin
 
 ## Status
 
-Router and configuration: implemented.
-Pending stages: all of `research` (Modules 03–05), trend classification (Module 05).
+Router, configuration and collection: implemented.
+Pending stages: normalization (Module 04), signal extraction and trend classification (Module 05).
 
 ## Runs
 

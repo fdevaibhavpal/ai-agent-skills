@@ -4,8 +4,8 @@ Analyze competing creators: what they cover, how often, how well it performs, an
 
 ## Status
 
-Router and configuration: implemented.
-Pending stages: competitor discovery and collection (Module 03), normalization (Module 04), coverage analysis (Module 05).
+Router, configuration and collection: implemented.
+Pending stages: normalization (Module 04), coverage analysis (Module 05).
 
 ## Runs
 

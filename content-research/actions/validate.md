@@ -4,8 +4,8 @@ Check whether an idea the user already has is worth making.
 
 ## Status
 
-Router and configuration: implemented.
-Pending stages: all of `research` and `gaps` (Modules 03–06), verdict (Module 08).
+Router, configuration and collection: implemented.
+Pending stages: normalization (Module 04), signal extraction (Module 05), gaps (Module 06), verdict (Module 08).
 
 ## Runs
 

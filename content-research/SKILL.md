@@ -1,6 +1,6 @@
 ---
 name: content-research
-description: A reusable agent skill for researching content opportunities across web sources, Reddit, YouTube, GitHub, news, and competitor content. Routes requests for trends, competitor analysis, content gaps, topic validation, content ideas and briefs. Status - the router and configuration work; the research stages behind them are still being built, so no research results are produced yet.
+description: A reusable agent skill for researching content opportunities across web sources, Reddit, YouTube, GitHub, news, and competitor content. Routes requests for trends, competitor analysis, content gaps, topic validation, content ideas and briefs. Status - routing, configuration and source collection work; the analysis stages are still being built, so no finished research results are produced yet.
 license: MIT
 ---
 
@@ -8,7 +8,7 @@ license: MIT
 
 A skill for finding out what to create: it gathers evidence about a topic, compares audience demand with existing content, and turns the result into cited content opportunities.
 
-> **Status (Module 02): router and configuration are implemented. Research stages are not.** The skill can pick an action, collect configuration and show a research plan. It cannot collect sources, extract signals, score or generate ideas yet. After showing the plan, say which stages are pending and stop. Never improvise research and present it as this skill's output.
+> **Status (Module 03): router, configuration and source collection are implemented. Analysis stages are not.** The skill can pick an action, collect configuration, show a research plan, and with `--collect-only` gather raw records from the available sources. It cannot normalize, extract signals, score or generate ideas yet. Otherwise, after showing the plan, say which stages are pending and stop. Never improvise research and present it as this skill's output.
 
 ## Commands
 
@@ -49,8 +49,8 @@ The entry points for the short commands live in [`commands/`](commands/). They o
 3. **Load the action file** and [`actions/_config.md`](actions/_config.md). Read only those, not the other actions.
 4. **Collect configuration** following `_config.md`: ask only what is missing, in one message, and apply defaults for the rest.
 5. **Show the research plan** (format in `_config.md`), with the stages the action runs.
-6. **Run the stages**, reusing results already produced in this session.
-7. **Report** in the action's output contract. Right now, stop at step 5 and list the pending stages.
+6. **Run the stages**, reusing results already produced in this session. For collection, follow [`sources/_contract.md`](sources/_contract.md) and the guide for each selected source: [web](sources/web.md), [reddit](sources/reddit.md), [youtube](sources/youtube.md), [github](sources/github.md), [news](sources/news.md), [competitors](sources/competitors.md).
+7. **Report** in the action's output contract. While later stages are pending, stop after step 5, or after collection if the user passed `--collect-only`, and list the pending stages.
 
 ## Composition
 
@@ -94,7 +94,7 @@ Skill / Action Router        ← implemented (Module 02)
   ↓
 Configuration                ← implemented (Module 02)
   ↓
-Research Collection          ← planned
+Research Collection          ← implemented (Module 03)
   ↓
 Normalization                ← planned
   ↓
@@ -121,16 +121,17 @@ Collection and analysis stay separate: the pipeline is a fixed sequence of steps
 |---|---|---|
 | `actions/` | One workflow file per action, plus shared `_config.md` | Module 02 |
 | `commands/` | One entry point per `cr-*` command | Module 02 |
-| `scripts/` | Small Python 3 (stdlib only) helpers | Modules 03–09 |
+| `sources/` | Source contract and one guide per source | Module 03 |
+| `scripts/` | Small Python 3 (stdlib only) helpers: `record.py`, `github.py`, `youtube.py` so far | Modules 03–09 |
 | `schemas/` | JSON schemas for sources, signals, opportunities | Module 04 onward |
 | `prompts/` | Prompt fragments for extraction, analysis, verification | Module 05 onward |
 | `templates/` | Report and brief templates | Modules 07–08 |
 | `examples/` | Sample configurations and outputs | Modules 07, 11 |
-| `tests/` | Tests and fixtures for the scripts | Alongside each script |
+| `tests/` | `unittest` tests and fixtures for the scripts | Alongside each script |
 
 ## TODO (planned, not implemented)
 
-- Source layer (web, Reddit, YouTube, GitHub, news, competitors) with fallbacks when a source is unavailable
+- A Reddit API helper (Reddit is collected through web search only for now)
 - Normalization, deduplication and date handling
 - Signal extraction, gap detection and opportunity scoring
 - Idea and brief generation

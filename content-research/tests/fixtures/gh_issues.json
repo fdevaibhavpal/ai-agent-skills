@@ -1,0 +1,9 @@
+[
+  {"number": 4821, "title": "Memory grows after repeated route changes", "body": "We see heap growth of ~40MB per navigation in production...",
+   "createdAt": "2026-08-02T10:15:00Z", "url": "https://github.com/acme/webapp/issues/4821",
+   "repository": {"name": "webapp", "nameWithOwner": "acme/webapp"}, "commentsCount": 14, "state": "open",
+   "labels": [{"name": "performance"}, {"name": "bug"}]},
+  {"number": 77, "title": "useMemo does not help here", "body": null,
+   "createdAt": "2026-07-19T08:00:00Z", "url": "https://github.com/foo/bar/issues/77",
+   "repository": {"nameWithOwner": "foo/bar"}, "state": "CLOSED", "labels": []}
+]
