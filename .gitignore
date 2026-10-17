@@ -1,0 +1,18 @@
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+
+# Secrets - skills must never contain API keys
+.env
+.env.*
+
+# Per-user skill state (profiles, run output); never committed
+.content-research/
