@@ -1,6 +1,6 @@
 ---
 name: content-research
-description: A reusable agent skill for researching content opportunities across web sources, Reddit, YouTube, GitHub, news, and competitor content. Intended for trends, competitor analysis, content gaps, topic validation, evidence-backed ideas and content briefs. Status - foundation only; the research workflows are planned and not implemented yet.
+description: A reusable agent skill for researching content opportunities across web sources, Reddit, YouTube, GitHub, news, and competitor content. Routes requests for trends, competitor analysis, content gaps, topic validation, content ideas and briefs. Status - the router and configuration work; the research stages behind them are still being built, so no research results are produced yet.
 license: MIT
 ---
 
@@ -8,25 +8,67 @@ license: MIT
 
 A skill for finding out what to create: it gathers evidence about a topic, compares audience demand with existing content, and turns the result into cited content opportunities.
 
-> **Status: foundation only (Module 01).** No workflow below is implemented yet. If the user invokes this skill or any `cr-*` command, say that the workflows are still planned, and do not improvise research and present it as this skill's output.
+> **Status (Module 02): router and configuration are implemented. Research stages are not.** The skill can pick an action, collect configuration and show a research plan. It cannot collect sources, extract signals, score or generate ideas yet. After showing the plan, say which stages are pending and stop. Never improvise research and present it as this skill's output.
 
-## Planned actions
+## Commands
 
-Each action gets a short command named `cr-<action>` (`c`ontent `r`esearch, then the action). Actions are planned only; the exact wiring per agent arrives with the action router module.
+Each action has a short command, `cr-<action>` (**c**ontent **r**esearch + action). The generic form `content-research <action>` is equivalent and works in agents that do not install the short commands.
 
-| Command | Action | Purpose |
+| Command | Action file | Purpose |
 |---|---|---|
-| `cr-research` | research | Broad content research for a topic |
-| `cr-trends` | trends | Emerging, growing, stable and declining topics |
-| `cr-competitors` | competitors | Analyze competing creators and their coverage |
-| `cr-gaps` | gaps | Find high-demand, low-supply topics |
-| `cr-ideas` | ideas | Evidence-backed content ideas |
-| `cr-validate` | validate | Check whether an existing idea has an opportunity |
-| `cr-topic` | topic | Deep investigation of one topic |
-| `cr-brief` | brief | Detailed content brief for a chosen opportunity |
-| `cr-full` | full | The complete chained workflow |
+| `cr-research` | [`actions/research.md`](actions/research.md) | Broad content research for a topic |
+| `cr-trends` | [`actions/trends.md`](actions/trends.md) | Emerging, growing, stable and declining topics |
+| `cr-competitors` | [`actions/competitors.md`](actions/competitors.md) | Analyze competing creators and their coverage |
+| `cr-gaps` | [`actions/gaps.md`](actions/gaps.md) | High-demand, low-supply topics |
+| `cr-ideas` | [`actions/ideas.md`](actions/ideas.md) | Evidence-backed content ideas |
+| `cr-validate` | [`actions/validate.md`](actions/validate.md) | Check whether an existing idea is worth making |
+| `cr-topic` | [`actions/topic.md`](actions/topic.md) | Deep investigation of one topic |
+| `cr-brief` | [`actions/brief.md`](actions/brief.md) | Detailed brief for a chosen opportunity |
+| `cr-full` | [`actions/full.md`](actions/full.md) | The complete chained workflow |
 
-Actions will be composable rather than duplicated. `full` chains the others, and `ideas` and `brief` reuse the earlier steps.
+The entry points for the short commands live in [`commands/`](commands/). They only point back to this skill; all logic stays here and in `actions/`.
+
+## Routing
+
+1. **Find the action.** Use the command the user typed, or the first word after `content-research`. If the user asks in plain language, map it to one action and say which you chose.
+2. **If there is no action** (bare `content-research`), show this menu and wait:
+
+   ```
+   What would you like to do?
+   1. research     Find content opportunities for a topic
+   2. trends       See what is emerging or declining
+   3. competitors  Analyze competing creators
+   4. gaps         Find topics with demand but little content
+   5. ideas        Get evidence-backed content ideas
+   6. validate     Check an idea you already have
+   7. topic        Investigate one topic in depth
+   8. brief        Write a content brief
+   9. full         Run everything
+   ```
+
+3. **Load the action file** and [`actions/_config.md`](actions/_config.md). Read only those, not the other actions.
+4. **Collect configuration** following `_config.md`: ask only what is missing, in one message, and apply defaults for the rest.
+5. **Show the research plan** (format in `_config.md`), with the stages the action runs.
+6. **Run the stages**, reusing results already produced in this session.
+7. **Report** in the action's output contract. Right now, stop at step 5 and list the pending stages.
+
+## Composition
+
+Actions reuse each other instead of duplicating work:
+
+| Action | Runs |
+|---|---|
+| `research` | collect, normalize, extract signals |
+| `trends` | `research`, classify trends |
+| `competitors` | discover, collect, normalize, analyze coverage |
+| `gaps` | `research`, detect gaps, score |
+| `ideas` | `research`, `gaps`, generate ideas |
+| `validate` | `research` (scoped to the idea), `gaps`, verdict |
+| `topic` | collect (scoped), normalize, extract signals, topic report |
+| `brief` | `topic`, `gaps`, write brief |
+| `full` | `research`, `trends`, `competitors`, `gaps`, `ideas`, `brief`, verify |
+
+If a stage already ran in this session with the same configuration, reuse its result and say so.
 
 ## Design principles
 
@@ -48,15 +90,15 @@ Actions will be composable rather than duplicated. `full` chains the others, and
 ```
 User
   ↓
-Skill / Action Router
+Skill / Action Router        ← implemented (Module 02)
   ↓
-Configuration
+Configuration                ← implemented (Module 02)
   ↓
-Research Collection
+Research Collection          ← planned
   ↓
-Normalization
+Normalization                ← planned
   ↓
-Signal Extraction
+Signal Extraction            ← planned
   ↓
 Trend / Demand / Competitor Analysis
   ↓
@@ -75,9 +117,10 @@ Collection and analysis stay separate: the pipeline is a fixed sequence of steps
 
 ## Folder map
 
-| Path | Purpose | Arrives in |
+| Path | Purpose | State |
 |---|---|---|
-| `actions/` | One workflow file per action | Module 02 |
+| `actions/` | One workflow file per action, plus shared `_config.md` | Module 02 |
+| `commands/` | One entry point per `cr-*` command | Module 02 |
 | `scripts/` | Small Python 3 (stdlib only) helpers | Modules 03–09 |
 | `schemas/` | JSON schemas for sources, signals, opportunities | Module 04 onward |
 | `prompts/` | Prompt fragments for extraction, analysis, verification | Module 05 onward |
@@ -87,7 +130,6 @@ Collection and analysis stay separate: the pipeline is a fixed sequence of steps
 
 ## TODO (planned, not implemented)
 
-- Action router and per-action configuration questions
 - Source layer (web, Reddit, YouTube, GitHub, news, competitors) with fallbacks when a source is unavailable
 - Normalization, deduplication and date handling
 - Signal extraction, gap detection and opportunity scoring

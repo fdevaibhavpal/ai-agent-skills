@@ -15,9 +15,13 @@ Each skill is a self-contained folder: Markdown instructions the agent follows, 
 
 | Skill | Status | Description |
 |---|---|---|
-| [`content-research`](content-research/SKILL.md) | Foundation only (Module 01) | Research content opportunities across the web, Reddit, YouTube, GitHub, news and competitor content. Workflows are not implemented yet. |
+| [`content-research`](content-research/SKILL.md) | In development (Module 02: action router) | Research content opportunities across the web, Reddit, YouTube, GitHub, news and competitor content. The router and configuration work; the research stages are not implemented yet. |
 
 More skills may be added later. Only `content-research` is in progress.
+
+### content-research commands
+
+`cr-research`, `cr-trends`, `cr-competitors`, `cr-gaps`, `cr-ideas`, `cr-validate`, `cr-topic`, `cr-brief`, `cr-full`. The pattern is `cr-<action>`: **c**ontent **r**esearch plus the action. For example, `cr-gaps React performance --audience senior developers`.
 
 ## Repository layout
 
@@ -29,7 +33,8 @@ ai-agent-skills/
 ├── .github/workflows/      # CI (planned)
 └── content-research/       # one folder per skill
     ├── SKILL.md            # skill entry point and metadata
-    ├── actions/            # per-action workflows
+    ├── actions/            # per-action workflows and shared config rules
+    ├── commands/           # cr-* entry points that route to the actions
     ├── scripts/            # deterministic helpers (Python 3, stdlib only)
     ├── schemas/            # JSON schemas for evidence and reports
     ├── prompts/            # prompt fragments used by actions
